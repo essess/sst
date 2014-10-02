@@ -19,6 +19,7 @@ DeclareModule ftdi
     loc.l       ; location
     is_open.b   ; is open flag
     is_hs.b     ; is high speed flag
+    idx.b       ; identifier used by ftdilib::open()
   EndStructure
   
   Enumeration
@@ -124,6 +125,7 @@ Module ftdi
             devlst()\loc = node\LocId
             devlst()\is_open = Bool( node\Flags & #FT_FLAGS_OPENED )
             devlst()\is_hs = Bool( node\Flags & #FT_FLAGS_HISPEED )
+            devlst()\idx = i
           Else
             Goto find_err:
           EndIf          
@@ -140,7 +142,8 @@ Module ftdi
   Procedure.s node_tostr( *node.node_t )
     Protected str.s = ""
     If *node
-      str = "Serial Number: " + *node\sn + #CRLF$ +
+      str = "Index:         " + *node\idx + #CRLF$ +
+            "Serial Number: " + *node\sn + #CRLF$ +
             "Description:   " + *node\desc + #CRLF$ +
             "Part($"+RSet(Hex(*node\type),2,"0")+"):     " + *node\part + #CRLF$ +
             "Location:     $" + RSet(Hex(*node\loc),8,"0") + #CRLF$ +

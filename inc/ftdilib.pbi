@@ -61,9 +61,9 @@ DeclareModule ftdilib
   Declare.i Load()
   Declare.i GetLibraryVersion( *version )
   Declare.i CreateDeviceInfoList( *devcnt )
-  Declare.i GetDeviceInfoDetail( dev.i, *flags, *type, *id, *locid, *sn, *desc, *hnd )
+  Declare.i GetDeviceInfoDetail( idx.i, *flags, *type, *id, *locid, *sn, *desc, *hnd )
   Declare.i GetDeviceInfoList( *array, *devcnt )
-  Declare.i Open( dev.i, *hnd )
+  Declare.i Open( idx.i, *hnd )
   Declare.i Close( hnd.i )
   Declare.i GetDriverVersion( hnd.i, *version )
   Declare.l ResetDevice( hnd.i )
@@ -180,9 +180,9 @@ Module ftdilib
     ProcedureReturn *me\FT_CreateDeviceInfoList( *devcnt )
   EndProcedure
   
-  Procedure.i GetDeviceInfoDetail( dev.i, *flags, *type, *id, *locid, *sn, *desc, *hnd )
+  Procedure.i GetDeviceInfoDetail( idx.i, *flags, *type, *id, *locid, *sn, *desc, *hnd )
     assert( *me )
-    ProcedureReturn *me\FT_GetDeviceInfoDetail( dev.i, *flags, *type, *id, *locid, *sn, *desc, *hnd )
+    ProcedureReturn *me\FT_GetDeviceInfoDetail( idx, *flags, *type, *id, *locid, *sn, *desc, *hnd )
   EndProcedure
   
   Procedure.i GetDeviceInfoList( *array, *devcnt )
@@ -190,10 +190,10 @@ Module ftdilib
     ProcedureReturn *me\FT_GetDeviceInfoList( *array, *devcnt )
   EndProcedure
   
-  Procedure.i Open( dev.i, *hnd )
+  Procedure.i Open( idx.i, *hnd )
     assert( *me )
-    assert( dev < 32 )
-    ProcedureReturn *me\FT_Open( dev, *hnd )
+    assert( idx < 32 )
+    ProcedureReturn *me\FT_Open( idx, *hnd )
   EndProcedure
   
   Procedure.i Close( hnd.i )
