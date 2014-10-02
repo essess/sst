@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://www.purebasic.com/namespace" version="1.0" creator="PureBasic 5.30 (Windows - x64)">
+  <section name="config">
+    <options closefiles="1" openmode="0" name="essess tuner suite"/>
+    <comment>
+      Copyright (c) 2014 Sean Stasiak. All rights reserved.
+      Developed by: Sean Stasiak &lt;sstasiak@gmail.com&gt;
+      Refer to license terms in license.txt; In the absence of such a file,
+      contact me at the above email address and I can provide you with one.
+    </comment>
+  </section>
+  <section name="data">
+    <explorer view="inc\" pattern="0"/>
+    <log show="1"/>
+    <lastopen date="2014-10-02 15:05" user="Sean" host="CHERNOBYL"/>
+  </section>
+  <section name="files">
+    <file name="detect\detect.pb">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
+      <fingerprint md5="4226a02e4848cfc2911a4297bb08e2af"/>
+    </file>
+    <file name="inc\assert.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <fingerprint md5="51fe044b19519b6a73caaf5dcb2eaae1"/>
+    </file>
+    <file name="inc\ftdilib.pbi">
+      <config load="0" scan="0" panel="1" warn="1" lastopen="1" panelstate="++"/>
+      <fingerprint md5="615c363aa3836d845823fc26f281d05c"/>
+    </file>
+    <file name="inc\ftdi.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
+      <fingerprint md5="c195450b5dbc21fa1505d62569f7c6c3"/>
+    </file>
+  </section>
+  <section name="targets">
+    <target name="detect dbg" enabled="1" default="1">
+      <inputfile value="detect\detect.pb"/>
+      <outputfile value="detect\detect.exe"/>
+      <executable value="detect\detect.exe"/>
+      <directory value="detect\"/>
+      <options unicode="1" xpskin="1" debug="1"/>
+      <temporaryexe value="source"/>
+      <format exe="default" cpu="1"/>
+      <warnings custom="1" type="error"/>
+    </target>
+  </section>
+</project>
