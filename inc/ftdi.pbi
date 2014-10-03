@@ -77,11 +77,11 @@ Module ftdi
   EndProcedure
   
   Procedure.w _prv_pid_fromid( id.i )
-    ProcedureReturn (id & $ffff)
+    ProcedureReturn id
   EndProcedure
   
   Procedure.w _prv_vid_fromid( id.i )
-    ProcedureReturn (id & $ffff0000) >> 16
+    ProcedureReturn id >> 16
   EndProcedure
   
   Procedure.i _prv_node_to_list( List devlst.node_t(), *node.FT_DEVICE_LIST_INFO_NODE )
