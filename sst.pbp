@@ -13,7 +13,7 @@
   <section name="data">
     <explorer view="inc\" pattern="0"/>
     <log show="1"/>
-    <lastopen date="2014-10-02 15:05" user="Sean" host="CHERNOBYL"/>
+    <lastopen date="2014-10-02 17:38" user="Sean" host="CHERNOBYL"/>
   </section>
   <section name="files">
     <file name="detect\detect.pb">
@@ -24,13 +24,13 @@
       <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
       <fingerprint md5="51fe044b19519b6a73caaf5dcb2eaae1"/>
     </file>
-    <file name="inc\ftdilib.pbi">
-      <config load="0" scan="0" panel="1" warn="1" lastopen="1" panelstate="++"/>
-      <fingerprint md5="615c363aa3836d845823fc26f281d05c"/>
-    </file>
     <file name="inc\ftdi.pbi">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
       <fingerprint md5="c195450b5dbc21fa1505d62569f7c6c3"/>
+    </file>
+    <file name="inc\ftdilib.pbi">
+      <config load="0" scan="0" panel="1" warn="1" lastopen="1" panelstate="++"/>
+      <fingerprint md5="615c363aa3836d845823fc26f281d05c"/>
     </file>
   </section>
   <section name="targets">

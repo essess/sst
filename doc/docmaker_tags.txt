@@ -1,0 +1,328 @@
+; ------------------------------------------------------------------------------
+; "User Library Mode" should normaly be checked for creating documentation
+; for your functions.
+;
+; Directory structure for DocMaker:
+;
+; YourDocDir
+;   OSSpecificFunctions.txt ; Only needed if "User Library Mode" is not checked
+;   |
+;    -English
+;     |
+;      -MainGuid
+;       |
+;       TextForMainGuidePage.txt
+;      |
+;       -Reference
+;        |
+;        ReferenceText.txt
+;     |
+;     YourDocsInEnglish.txt
+;   |
+;    -France
+;     |
+;     YourDocsInFrench.txt
+;   |
+;    -German
+;     |
+;     YourDocsInGerman.txt
+;   |
+;    -Output  ; DocMaker generated files go here, but can be any other location
+;             ; specified with "Output directory"
+;     |
+;      -HelpPictures ; Sub directory in your output directory for pictures
+;       |
+;       YourPicture.jpg
+;       AnotherPicture.png
+;
+; Directories "MainGuid" and "Reference" should exist in all your
+; language sub-directories, even if empty, to stop DocMaker from complaining.
+; But this is only needed if you have not checked "User Library Mode".
+;
+; "OSSpecificFunctions.txt" is a file with a list of functions only working
+; on specific OSs, all functions not listed here are assumed to work an all OSs.
+; You should have at least an empty "OSSpecificFunctions.txt" in your
+; documentation main directory, to stop DocMaker from complaining.
+; Onyl used if "User Library Mode" is not checked.
+;
+; Format of OSSpecificFunctions.txt:
+;   functionName:List of OSs supported by this function, separated by comma
+;   (examples:)
+;   MyFunc:Windows, Linux
+;   MyFunc2:Linux, MacOS
+;   ...
+;   ...
+;
+; OS specific tags like @supportedos only work,
+; if "User Library Mode" is not checked!
+;
+; All lines starting with ';' will be ignored, the ';' must be the first character
+; of the line, no tabs or spaces allowed before that!
+;
+; All tags that are inserting text like "Parameter", "Return value"...
+; will insert two line-breaks before and after the word.
+;
+; All link tags will convert the link name to all lower case.
+;
+; A '|' between parameters means, use either notation.
+;
+; Where a parameter is in doublequotes, the doublequotes will not be shown
+; in the resulting document file.
+;
+;
+; DocMaker tags:
+;
+;
+; @green Word | "Text in green"
+;   Set color for next word or text in doublequotes to green.
+;
+; @red Word | "Text in red"
+;   Set color for next word or text in doublequotes to reg
+;
+; @orange Word | "Text in orange"
+;   Set color for next word or text in doublequotes to orange
+;
+; @blue Word | "Text in blue"
+;   Set color for next word or text in doublequotes to blue.
+;
+; @bold Word | "Text in bold"
+;   Set format of next word or text in doublequotes to bold.
+;
+; @code
+;   Text after this till @endcode will be shown as PureBasic program.
+;
+; @commandlist
+;   Inserts the list of functions defined with "@function name()"
+;
+; @constantcolor "Text"
+;   Set color for text in doublequotes to constant-color
+;
+; @description
+;   Inserts the bold text "Description" and indents the following text
+;
+; @elseos
+;   Text till @endos will be inserted, if @os did not matched
+;
+; @endcode
+;   End-tag for @code
+;
+; @endfixedfont
+;   End-tag for @fixedfont
+;
+; @endos
+;   Ends a @os / @elseos block
+;
+; @example
+;   Inserts the bold text "Example:"
+;
+; @examplefile
+;   Could not find out what this tag does.
+;
+; @fastlink "functionName()"
+;   Inserts a link to functionName after stripping the last two characters
+;   from functionName(), which will just leave functionName and
+;   inserts this name as HTML link in all lower case letters
+;   with an appended ".html" and the link-name with no case conversion
+;   as link name.
+;
+; @fixedfont
+;   Sets the font to fixed width and the text-style to preformated,
+;   that is, all spaces and line-breaks are preserved, where for normal text
+;   spaces are reduced to one and line-breaks in the input text are ignored.
+;
+; @formatelse
+;   Text till @formatend will be inserted, if @formatif did not matched
+;
+; @formatendif
+;   Ends a @formatif / @formatelse block.
+;
+; @formatif Format-name
+;   Format-name = html will insert everything till @formatelse / @formatendif
+;   if DocMaker is set ouput HTML, could not figure out more Format-names.
+;
+; @function [Result = ]functionName([parameter-list])
+;   Inserts functionName(), after stripping all parts in squarebrackets,
+;   centered and bold on top of page, and adds functionName to commandlist.
+;   It than adds two line-breaks the bold word "Syntax" and the complete
+;   line after @function indented with functionName in bold and the color
+;   of function names.
+;
+; @functioncolor Word | "Text in functioncolor"
+;   Set color for next word or text in doublequotes to the color of functions.
+;
+; @image imageName.ext
+;   Inserts a link to a picture stored in directory "HelpPictures"
+;   under your output directory.
+;   imageName.ext can be "mypic.png" or "thisPicture.jpg" for example
+;
+; @indent
+;   Indent the following text until @endindent
+;
+; @endindent
+;   End-tag for @indent , also ends indentation for tags who sets indentation on.
+;
+; @internetlink "link-URL" Word | "Text for link"
+;   Inserts a web-link, the link should be in doublequotes,
+;   followed by the next word, or the whole text in doublequotes as link-text.
+;
+; @keyword Word | "Text in keyword-color"
+;   Set color for next word or text in doublequotes to the color of keywords
+;   and bold.
+;
+; @library Library-name
+;   Should be the first tag in a document text.
+;   Set the library name for this document.
+;
+; @librarylink library-name Word | "Text for link"
+;   Inserts a link to another help document in the same help directory with
+;   the name of library-name, next word or text in doublequotes will show
+;   as link name.
+;   library-name should only be a single name for the other library,
+;   DocMaker decorates it automaticly as follows:
+;   "../library-name/index.html".
+;
+; @linebreak
+;   Forces a line-break, line-breaks in the document textfile will normally
+;   not be shown in the resulting help file, with the exeption for text
+;   between @fixedfont / @endfixedfont.
+;   So for formating paragraphs you have to insert several @linebreak tags.
+;
+; @link "link-URL" "Link text"
+;   Inserts a HTML link to link-URL with an appended ".html".
+;   So "mylinks/myfile" will become "mylinks/myfile.html"
+;   The second text will be shown as the link-text,
+;   for just one word, the doublequotes can be omitted,
+;   else all text in doublequotes will become the link-text.
+;
+; @mainguidelink filename Word | "Text for link"
+;   Inserts a link to a file in the mainguide directory, and uses word or
+;   text in doublequotes as the link text.
+;   Only usefull if "User Library Mode" is not checked.
+;   DocMaker decorates filename like this: "../mainguide/filename.html".
+;
+; @os OS-Name
+;   OS-Name must be a single name.
+;   Text till @elseos or @endos will be inserted if OS-Name matches os
+;   selected in DocMaker.
+;   @os / @elseos / @endos can not be nested!
+;   Some tags are also ending a @os block, but it is better to use @endos.
+;
+; @overview
+;   Inserts "Overview" in bold and indents following text
+;
+; @parameter
+;   Inserts "Parameter" in bold and indents following text
+;
+; @parameters
+;   Inserts "Parameters" in bold and indents following text
+;
+; @referencelink filename Word | "Text for link"
+;   Inserts a link to a file in the reference directory, and uses word or
+;   text in doublequotes as the link text.
+;   Only usefull if "User Library Mode" is not checked.
+;   DocMaker decorates filename like this: "../reference/filename.html".
+;
+; @returnvalue
+;   Inserts "Return value" in bold and indents following text
+;
+; @noreturnvalue
+;   Inserts "No Return value" in bold and indents following text
+;
+; @section Rest-of-line
+;   Inserts two line-breaks and the rest of the line after the @section tag in
+;   bold and another two line-breaks
+;
+; @supportedos List-of-supported-OSs
+;   Will insert "Supported OS" in bold
+;   and the list of supported OSs for this function,
+;   dependent on the list in the "OSSpecificFunction.txt" file, if not
+;   in "User Library Mode" and the paramter(s) are ignored
+;   If the function is not listed in this file, the OS-list will show "All"
+;   If in "User Library Mode", the comma separated list of OSs are shown,
+;   the OS names are not checked for validation!
+;   It also inserts the link to previous/next/main-index for this library
+;   document, so it should be the last tag of a function description.
+;
+; @syntax
+;   Inserts "Syntax" in bold and indents following text
+;
+; @title Word | "Title text"
+;   Inserts the word or text in doublequotes centered and bold at top of page.
+;   This should be the first tag in a document text file.
+;   Page title should be set with @library for library documentation, or with
+;   @title for mainguide or reference pages.
+;
+; @underline Word | "Text to underline"
+;   Will underline the next word, or the text in doublequotes.
+;
+; ------------------------------------------------------------------------------
+;
+;      List of PureBasic commands that are not fully cross-platform
+;
+; ------------------------------------------------------------------------------
+;
+; This file is used to automatically generate @SupportedOS tags for the help,
+; and for any other purpose where such a list might be usefull.
+; Keep the syntax strict, as it is automatically parsed.
+;
+; This file lists ONLY commands which do not work on all OS. Any command not listed
+; here will be marked as supported by all OS.
+;
+; File syntax:
+; - Empty lines and ";" lines are ignored
+; - Whitespace and case are ignored (also for function names to reduce errors)
+;
+; #Library: <Name>
+;   Specify the name of the library where the next functions are in.
+;
+; A function entry looks like one of these:
+;   <functionname> : <os tags>
+;   <functionname> : <os tags> - <comment>
+;
+; <os tags> can be one of these separated by ",":
+;   Windows       - Windows, all subsystems
+;   Linux         - Linux, all subsystems
+;   MacOS         - OSX, all subsystems, all processor types
+;   WindowsOpenGl - Windows, OpenGl subsystem
+;   WindowsPlain  - Windows, without OpenGl subsystem
+;   LinuxOpenGl   - Linux, OpenGl subsystem
+;   LinuxPlain    - Linux, without OpenGl subsystem
+;   MacOSppc      - MacOS - ppc version only
+;   MacOSx86      - MacOS - x86 version only
+;
+;   If a new tag is added, please document its use here.
+;
+;   If such a tag is present, it means the function works on this OS. If the tag is present in brackets, like "(Windows)",
+;   it means that the command exists only as a dummy function, so it compiles but does nothing. If a tag is not present at all,
+;   it means that the command is entirely missing on that OS.
+;
+;   The dummy tags will be ignored for the manual, but they might be useful for other purposes.
+;   (for example to do a tool to advise on platform problems)
+;
+; <comment> can be a short comment about platform compatibility of this command. Something like
+;   "Only has a meaning on windows" or similar may be helpful. (also ignored for the manual)
+;
+;
+; Spechial grouping tag (for entire libraries etc):
+; #StartGroup: <os tags> - <comment>
+;   <function list>
+; #EndGroup
+;
+;   Applies <os tags> and the optional <comment> to all commands in the list.
+;   Useful when entire libraries have the same tags and comments.
+;   The function list is one function per line (empty lines, comments and #Library lines are allowed)
+;
+;
+; Example: (indicates that the command is supported on windows and has a dummy on linux and macos, with a comment about that)
+;   #Library: Window
+;   SmartWindowRefresh: Windows, (Linux), (MacOS) - Only has an effect on Windows
+;
+; Group Example:
+;   #StartGroup: Windows, Linux - 3DEngine not supported on MacOS
+;     #Library: Engine3D
+;     Add3DArchive
+;     AmbientColor
+;     ...
+;   #StopGroup
+;
+; ------------------------------------------------------------------------------
