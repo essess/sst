@@ -1,0 +1,18 @@
+;--- ftdi:: -------------------------------------
+@Library ftdi
+
+@section Overview
+  @red TODO
+
+@section Public
+  @commandlist
+
+
+;--- ftdi::find() -------------------------------
+@Function find()
+@description
+@parameters
+@returnvalue
+@code
+  <small example here>
+@endcode
