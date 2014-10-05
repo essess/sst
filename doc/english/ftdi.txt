@@ -4,8 +4,7 @@
 @section Overview
   @red TODO
 
-@section Public
-  @commandlist
+@commandlist
 
 
 ;--- ftdi::find() -------------------------------
