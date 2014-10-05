@@ -106,12 +106,12 @@ Module ftdi
   ; !threadsafe
   Procedure.i find( List devlst.node_t(), *matcher.matcher_t )
     Protected.i cnt, i
-    If CreateDeviceInfoList( @cnt ) = #FT_OK And *matcher
+    If FT_CreateDeviceInfoList( @cnt ) = #FT_OK And *matcher
       While i < cnt
         Protected node.FT_DEVICE_LIST_INFO_NODE
-        If GetDeviceInfoDetail(i, @node\Flags, @node\Type, @node\ID,
-                               @node\LocId, @node\SerialNumber, @node\Description,
-                               @node\ftHandle) <> #FT_OK
+        If FT_GetDeviceInfoDetail(i, @node\Flags, @node\Type, @node\ID,
+                                  @node\LocId, @node\SerialNumber, @node\Description,
+                                  @node\ftHandle) <> #FT_OK
           Goto find_err:
         EndIf
         If *matcher( @node )

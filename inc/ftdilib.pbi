@@ -59,30 +59,31 @@ DeclareModule ftdilib
   EndEnumeration
   
   Declare.i Load()
-  Declare.i GetLibraryVersion( *version )
-  Declare.i CreateDeviceInfoList( *devcnt )
-  Declare.i GetDeviceInfoDetail( idx.i, *flags, *type, *id, *locid, *sn, *desc, *hnd )
-  Declare.i GetDeviceInfoList( *array, *devcnt )
-  Declare.i Open( idx.i, *hnd )
-  Declare.i Close( hnd.i )
-  Declare.i GetDriverVersion( hnd.i, *version )
-  Declare.l ResetDevice( hnd.i )
-  Declare.l Purge( hnd.i, mask.l )
-  Declare.l SetLatencyTimer( hnd.i, timer.b )
-  Declare.l SetBitMode( hnd.i, mask.b, mode.b )
-  Declare.l SetFlowControl( hnd.i, cntrl.w, xon.b=17, xoff.b=19 )
-  Declare.l SetDataCharacteristics( hnd.i, len.b, stopbits.b, parity.b )
-  Declare.l SetBaudRate( hnd.i, rate.l )
-  Declare.l Write( hnd.i, *buff, writecnt.l, *writtencnt )
-  Declare.l Read_( hnd.i, *buff, readcnt.l, *returncnt )
+  Declare.i FT_GetLibraryVersion( *version )
+  Declare.i FT_CreateDeviceInfoList( *devcnt )
+  Declare.i FT_GetDeviceInfoDetail( idx.i, *flags, *type, *id, *locid, *sn, *desc, *hnd )
+  Declare.i FT_GetDeviceInfoList( *array, *devcnt )
+  Declare.i FT_Open( idx.i, *hnd )
+  Declare.i FT_Close( hnd.i )
+  Declare.i FT_GetDriverVersion( hnd.i, *version )
+  Declare.l FT_ResetDevice( hnd.i )
+  Declare.l FT_Purge( hnd.i, mask.l )
+  Declare.l FT_SetLatencyTimer( hnd.i, timer.b )
+  Declare.l FT_SetBitMode( hnd.i, mask.b, mode.b )
+  Declare.l FT_SetFlowControl( hnd.i, cntrl.w, xon.b=17, xoff.b=19 )
+  Declare.l FT_SetDataCharacteristics( hnd.i, len.b, stopbits.b, parity.b )
+  Declare.l FT_SetBaudRate( hnd.i, rate.l )
+  Declare.l FT_Write( hnd.i, *buff, writecnt.l, *writtencnt )
+  Declare.l FT_Read( hnd.i, *buff, readcnt.l, *returncnt )
 
 EndDeclareModule
 
 Module ftdilib
   
   EnableExplicit
-  XIncludeFile "assert.pbi"
-
+  IncludeFile "assert.pbi"
+  
+  ;{
   Prototype.l _FT_GetLibraryVersion(*lpdwDLLVersion)
   Prototype.l _FT_CreateDeviceInfoList(*lpdwNumDevs)
   Prototype.l _FT_GetDeviceInfoDetail(dwIndex.l,*lpdwFlags,*lpdwType,*lpdwID,*lpdwLocId,*pcSerialNumber.p-ascii,*pcDescription.p-ascii,*ftHandle)
@@ -99,6 +100,7 @@ Module ftdilib
   Prototype.l _FT_SetBaudRate(ftHandle.i,dwBaudRate.l)
   Prototype.l _FT_Write(ftHandle.i,*lpBuffer,dwBytesToWrite.l,*lpdwBytesWritten)
   Prototype.l _FT_Read(ftHandle.i,*lpBuffer,dwBytesToRead.l,*lpdwBytesReturned)
+  ;}
 
   Structure DLL
     *FT_GetLibraryVersion._FT_GetLibraryVersion
@@ -119,7 +121,7 @@ Module ftdilib
     *FT_Read._FT_Read
   EndStructure
 
-  Global *me.DLL=0
+  Global *me.DLL = 0
 
   Procedure.i Load()
     If Not *me
@@ -170,83 +172,83 @@ Module ftdilib
     ProcedureReturn *me
   EndProcedure
 
-  Procedure.i GetLibraryVersion( *version )
+  Procedure.i FT_GetLibraryVersion( *version )
     assert( *me )
     ProcedureReturn *me\FT_GetLibraryVersion( *version )
   EndProcedure
   
-  Procedure.i CreateDeviceInfoList( *devcnt )
+  Procedure.i FT_CreateDeviceInfoList( *devcnt )
     assert( *me )
     ProcedureReturn *me\FT_CreateDeviceInfoList( *devcnt )
   EndProcedure
   
-  Procedure.i GetDeviceInfoDetail( idx.i, *flags, *type, *id, *locid, *sn, *desc, *hnd )
+  Procedure.i FT_GetDeviceInfoDetail( idx.i, *flags, *type, *id, *locid, *sn, *desc, *hnd )
     assert( *me )
     ProcedureReturn *me\FT_GetDeviceInfoDetail( idx, *flags, *type, *id, *locid, *sn, *desc, *hnd )
   EndProcedure
   
-  Procedure.i GetDeviceInfoList( *array, *devcnt )
+  Procedure.i FT_GetDeviceInfoList( *array, *devcnt )
     assert( *me )
     ProcedureReturn *me\FT_GetDeviceInfoList( *array, *devcnt )
   EndProcedure
   
-  Procedure.i Open( idx.i, *hnd )
+  Procedure.i FT_Open( idx.i, *hnd )
     assert( *me )
     assert( idx < 32 )
     ProcedureReturn *me\FT_Open( idx, *hnd )
   EndProcedure
   
-  Procedure.i Close( hnd.i )
+  Procedure.i FT_Close( hnd.i )
     assert( *me )
     ProcedureReturn *me\FT_Close( hnd.i )
   EndProcedure
   
-  Procedure.i GetDriverVersion( hnd.i, *version )
+  Procedure.i FT_GetDriverVersion( hnd.i, *version )
     assert( *me )
     ProcedureReturn *me\FT_GetDriverVersion( hnd, *version )
   EndProcedure
   
-  Procedure.l ResetDevice( hnd.i )
+  Procedure.l FT_ResetDevice( hnd.i )
     assert( *me )
     ProcedureReturn *me\FT_ResetDevice( hnd )
   EndProcedure
   
-  Procedure.l Purge( hnd.i, mask.l )
+  Procedure.l FT_Purge( hnd.i, mask.l )
     assert( *me )
     ProcedureReturn *me\FT_Purge( hnd, mask )
   EndProcedure
   
-  Procedure.l SetLatencyTimer( hnd.i, timer.b )
+  Procedure.l FT_SetLatencyTimer( hnd.i, timer.b )
     assert( *me )
     ProcedureReturn *me\FT_SetLatencyTimer( hnd, timer )
   EndProcedure
   
-  Procedure.l SetBitMode( hnd.i, mask.b, mode.b )
+  Procedure.l FT_SetBitMode( hnd.i, mask.b, mode.b )
     assert( *me )
     ProcedureReturn *me\FT_SetBitMode( hnd, mask, mode )
   EndProcedure
   
-  Procedure.l SetFlowControl( hnd.i, cntrl.w, xon.b=17, xoff.b=19 )
+  Procedure.l FT_SetFlowControl( hnd.i, cntrl.w, xon.b=17, xoff.b=19 )
     assert( *me )
     ProcedureReturn *me\FT_SetFlowControl( hnd, cntrl, xon, xoff )
   EndProcedure
   
-  Procedure.l SetDataCharacteristics( hnd.i, len.b, stopbits.b, parity.b )
+  Procedure.l FT_SetDataCharacteristics( hnd.i, len.b, stopbits.b, parity.b )
     assert( *me )
     ProcedureReturn *me\FT_SetDataCharacteristics( hnd, len, stopbits, parity )
   EndProcedure
   
-  Procedure.l SetBaudRate( hnd.i, rate.l )
+  Procedure.l FT_SetBaudRate( hnd.i, rate.l )
     assert( *me )
     ProcedureReturn *me\FT_SetBaudRate( hnd, rate )
   EndProcedure
   
-  Procedure.l Write( hnd.i, *buff, writecnt.l, *writtencnt )
+  Procedure.l FT_Write( hnd.i, *buff, writecnt.l, *writtencnt )
     assert( *me )
     ProcedureReturn *me\FT_Write( hnd, *buff, writecnt, *writtencnt )
   EndProcedure
   
-  Procedure.l Read_( hnd.i, *buff, readcnt.l, *returncnt )
+  Procedure.l FT_Read( hnd.i, *buff, readcnt.l, *returncnt )
     assert( *me )
     ProcedureReturn *me\FT_Read( hnd, *buff, readcnt, *returncnt )
   EndProcedure    
