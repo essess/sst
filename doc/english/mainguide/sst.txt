@@ -1,20 +1,32 @@
 @title SST - essess tuner suite
 
-@section Overview
-  @red TODO
+@section Philosophy
+I have some restrictions I've placed on this project and myself (not in any particular order):
+  @indent
+  1] Windows platform @linebreak
+  2] PureBasic ecosystem - if it doesn't already exist, I roll my own. @linebreak
+  3] BSD license @linebreak
+  @endindent
+Windows is simply the largest platform in common use. Yeah, @internetlink "http://purebasic.com/" "PureBasic" is crossplatform but I'm not going to bother @linebreak
+unless the demand is there or someone is willing to pay. PB is more verbose than I care for, but it has tons of @linebreak
+built-in libraries to leverage. I can also generate native x86/x64 applications and dll's. @linebreak
+@linebreak
+I already know that once code goes up in a repo for people to examine, there is nothing in this world to keep them @linebreak
+from taking and rolling it into their own private codebases. I simply make my stuff BSD in the hopes that I get to @linebreak
+see where it ends up. @linebreak
 
 @section Executables
-  @red TODO
+  @indent
+    @mainguidelink detect "detect.exe" - A simple app to enumerate all connected FTDI devices
+  @endindent
 
 @section Code
   @indent
-
-    @section API's
-    @librarylink ftdi "ftdi::"
-
-;   @section Cross Reference
-;   @referencelink "commandindex" "Index of functions" @linebreak
-;   @referencelink "pbconstants" "Constants" @linebreak
-;   @referencelink "osspecific" "OS specific functions" @linebreak
-
+    @section Libraries
+    @librarylink ftdi "FTDI::"
+    @section Reference
+    @referencelink "style" "Style Guide" @linebreak
+;    @referencelink "commandindex" "Index of functions" @linebreak        ;< do manually
+;    @referencelink "pbconstants" "Constants" @linebreak                  ;< do manually
+;    @referencelink "osspecific" "OS specific functions" @linebreak       ;< do manually
   @endindent
