@@ -9,16 +9,32 @@ EnableExplicit
 IncludePath "..\inc"
 IncludeFile "ftdi.pbi"
 
-OpenConsole()
+Global.i cnt = 0
 
-NewList devlst.ftdi::node_t()
-If ftdi::init() And ftdi::find( devlst(), ftdi::all() ) And ListSize( devlst() )
-  ForEach devlst()
-    PrintN( ftdi::node_tostr(devlst()) )
-  Next
-Else
-  PrintN( "No FTDI devices found." )
+Procedure.s boolToStr( true.i )
+  If true
+    ProcedureReturn "True"
+  EndIf
+  ProcedureReturn "False"
+EndProcedure
+
+Procedure.i show( *node.FTDI::tNode )
+  PrintN( "---------------------------------------------" + #CRLF$ +
+          "Serial Number: " + *node\SerialNumber + #CRLF$ +
+          "Description:   " + *node\Description + #CRLF$ +
+          "VID:          $" + RSet(Hex(*node\VID),4,"0") + #CRLF$ +
+          "PID:          $" + RSet(Hex(*node\PID),4,"0") + #CRLF$ +
+          "Is Open:       " + boolToStr(*node\IsOpen) + #CRLF$ +
+          "Is High Speed: " + boolToStr(*node\IsHighSpeed) + #CRLF$ +
+          "---------------------------------------------")
+  cnt + 1
+  ProcedureReturn 0 ;< no match, to force continued enumeration
+EndProcedure
+
+If OpenConsole() And FTDI::Init()
+  PrintN( "Searching: " )
+  FTDI::First( @show() )    ;< use the matcher() to dump nodes
+  PrintN( Str(cnt)+" FTDI devices found." )
+  Input()               
+  CloseConsole()
 EndIf
-FreeList( devlst() )
-
-Input()
