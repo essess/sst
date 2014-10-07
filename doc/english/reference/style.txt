@@ -1,0 +1,12 @@
+@title Style Guide
+@section Naming
+  t<Type> - structures, prototypes, and various typedefs @linebreak
+  i<Interface> - Interfaces @linebreak
+  @linebreak
+  @bold Case @linebreak
+  @indent
+    PascalCasing  - method names and public procedures in order to easily mix with existing PB naming schemes @linebreak
+    camelCasing - private procedures and variables, usually seen in the form of prv<FuncName>/prv<Var> @linebreak
+  @endindent
+@section Namespaces/Modules
+  Use them - be very selective in what is exposed and leverage the keywords provided

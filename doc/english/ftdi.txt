@@ -1,17 +1,53 @@
-;--- ftdi:: -------------------------------------
 @Library ftdi
 
-@section Overview
-  @red TODO
+@section Public
+  @indent
+  @section Structures/Types/Prototypes
+  ; tNode, tMatcher
+  @section Interfaces
+  ; iDevice
+  @section Procedures/Functions
+     @fastlink "Init()" @linebreak
+     @fastlink "First()" @linebreak
+     @fastlink "Any()" @linebreak
+  @endindent
 
-@commandlist
+@section Private
+  @indent
+  @section Structures/Types/Prototypes
+  ; todo
+  @section Interfaces
+  ; todo
+  @section Procedures/Functions
+  ; todo
+  @endindent
 
+;------------------------------------------------------------------------------
 
-;--- ftdi::find() -------------------------------
-@Function find()
+@Function bool = Init()
 @description
+Initialize the FTDI Module. Must be called before doing anything else with this module.
 @parameters
+none
 @returnvalue
-@code
-  <small example here>
-@endcode
+
+;------------------------------------------------------------------------------
+
+@Function *iDevice = First( *matcher.tMatcher=0 )
+@description
+Finds and returns first matching iDevice
+@parameters
+*matcher
+@returnvalue
+*iDevice
+
+;------------------------------------------------------------------------------
+
+@Function *tMatcher = Any()
+@description
+Returns a default tMatcher that matches on anything
+@parameters
+none
+@returnvalue
+
+;------------------------------------------------------------------------------

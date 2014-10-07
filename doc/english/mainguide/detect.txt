@@ -1,0 +1,3 @@
+@title detect.exe
+@overview
+A simple app to enumerate all connected FTDI devices. Useful for quick troubleshooting or device examination
