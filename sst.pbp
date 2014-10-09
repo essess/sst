@@ -11,29 +11,29 @@
     </comment>
   </section>
   <section name="data">
-    <explorer view="inc\" pattern="0"/>
+    <explorer view="inc\ftdi\" pattern="0"/>
     <log show="1"/>
-    <lastopen date="2014-10-06 22:13" user="Sean" host="CHERNOBYL"/>
+    <lastopen date="2014-10-08 21:36" user="Sean" host="CHERNOBYL"/>
   </section>
   <section name="files">
     <file name="detect\detect.pb">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <config load="0" scan="0" panel="1" warn="1" lastopen="0" panelstate="++"/>
       <fingerprint md5="6007a2672c8e141ff99503b46cfa62ae"/>
     </file>
     <file name="inc\assert.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <config load="0" scan="0" panel="1" warn="1" lastopen="0" panelstate="++"/>
       <fingerprint md5="51fe044b19519b6a73caaf5dcb2eaae1"/>
     </file>
     <file name="inc\ftdi.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
       <fingerprint md5="0aa3f71622a1b598c50024b2eb700d72"/>
     </file>
     <file name="inc\ftdi\classes.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+++"/>
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+++"/>
       <fingerprint md5="d61f3ee03c833a2f58680d02b38c2b67"/>
     </file>
     <file name="inc\ftdi\dll.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+++"/>
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+++"/>
       <fingerprint md5="658251c12671a116e4e4276741fcd7f0"/>
     </file>
     <file name="inc\ftdi\globals.pbi">
@@ -41,12 +41,24 @@
       <fingerprint md5="6a4ee83ccf0d4f17ac37ec43816c3ec6"/>
     </file>
     <file name="inc\ftdi\procs.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+++"/>
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+++"/>
       <fingerprint md5="a494857d7860d99973e05220ebac3c85"/>
     </file>
     <file name="inc\ftdi\types.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+++"/>
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+++"/>
       <fingerprint md5="d610e3a126e9ade0b7e336b4397696ef"/>
+    </file>
+    <file name="dumpcfg\dumpcfg.pb">
+      <config load="0" scan="0" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <fingerprint md5="510cfdc03d19289ffa8f649835859cbf"/>
+    </file>
+    <file name="loadcfg\loadcfg.pb">
+      <config load="0" scan="0" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <fingerprint md5="510cfdc03d19289ffa8f649835859cbf"/>
+    </file>
+    <file name="modcfg\modcfg.pb">
+      <config load="0" scan="0" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <fingerprint md5="d9545c4b717ac5669bfb8770f4218548"/>
     </file>
   </section>
   <section name="targets">
@@ -55,6 +67,36 @@
       <outputfile value="detect\detect.exe"/>
       <executable value="detect\detect.exe"/>
       <directory value="detect\"/>
+      <options unicode="1" xpskin="1" debug="1"/>
+      <temporaryexe value="source"/>
+      <format exe="default" cpu="1"/>
+      <warnings custom="1" type="error"/>
+    </target>
+    <target name="loadcfg dbg" enabled="1" default="0">
+      <inputfile value="loadcfg\loadcfg.pb"/>
+      <outputfile value="loadcfg\loadcfg.exe"/>
+      <executable value="loadcfg\loadcfg.exe"/>
+      <directory value="loadcfg\"/>
+      <options unicode="1" xpskin="1" debug="1"/>
+      <temporaryexe value="source"/>
+      <format exe="default" cpu="1"/>
+      <warnings custom="1" type="error"/>
+    </target>
+    <target name="dumpcfg dbg" enabled="1" default="0">
+      <inputfile value="dumpcfg\dumpcfg.pb"/>
+      <outputfile value="dumpcfg\dumpcfg.exe"/>
+      <executable value="dumpcfg\dumpcfg.exe"/>
+      <directory value="dumpcfg\"/>
+      <options unicode="1" xpskin="1" debug="1"/>
+      <temporaryexe value="source"/>
+      <format exe="default" cpu="1"/>
+      <warnings custom="1" type="error"/>
+    </target>
+    <target name="modcfg dbg" enabled="1" default="0">
+      <inputfile value="modcfg\modcfg.pb"/>
+      <outputfile value="modcfg\modcfg.exe"/>
+      <executable value="modcfg\modcfg.exe"/>
+      <directory value="modcfg\"/>
       <options unicode="1" xpskin="1" debug="1"/>
       <temporaryexe value="source"/>
       <format exe="default" cpu="1"/>
