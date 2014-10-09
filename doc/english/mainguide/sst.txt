@@ -1,4 +1,6 @@
 @title SST - essess tuner suite
+@title SST - essess tuner suite
+@title SST - essess tuner suite
 
 @section Philosophy
 I have some restrictions I've placed on this project and myself (not in any particular order):
@@ -17,7 +19,10 @@ see where it ends up. @linebreak
 
 @section Executables
   @indent
-    @mainguidelink detect "detect.exe" - A simple app to enumerate all connected FTDI devices
+    @mainguidelink detect "detect.exe" - A simple app to enumerate all connected FTDI devices @linebreak
+    @mainguidelink dumpcfg "dumpcfg.exe" - Dump ecu configuration to file @linebreak
+    @mainguidelink loadcfg "loadcfg.exe" - Load ecu configuration from file @linebreak
+    @mainguidelink modcfg "modcfg.exe" - Modify an ecu configuration file @linebreak
   @endindent
 
 @section Code
@@ -25,6 +30,7 @@ see where it ends up. @linebreak
     @section Libraries
     @librarylink ftdi "FTDI::"
     @section Reference
+    @referencelink "fformats" "File Formats" @linebreak
     @referencelink "style" "Style Guide" @linebreak
 ;    @referencelink "commandindex" "Index of functions" @linebreak        ;< do manually
 ;    @referencelink "pbconstants" "Constants" @linebreak                  ;< do manually
