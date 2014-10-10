@@ -9,32 +9,49 @@ EnableExplicit
 IncludePath "..\inc"
 IncludeFile "ftdi.pbi"
 
+Enumeration
+  #MAINWIN
+  #TREEVIEW
+EndEnumeration
+
 Global.i cnt = 0
-
-Procedure.s boolToStr( true.i )
-  If true
-    ProcedureReturn "True"
+Procedure.i AddToTreeView( *node.FTDI::tNode )
+  cnt + 1 : SetWindowTitle(#MAINWIN, "Detect ["+Str(cnt)+"]")
+  AddGadgetItem(#TREEVIEW, -1, *node\SerialNumber, 0, 0)
+  AddGadgetItem(#TREEVIEW, -1, *node\Description, 0, 1)
+  AddGadgetItem(#TREEVIEW, -1, "PID: $"+RSet(Hex(*node\PID),4,"0"), 0, 1)
+  AddGadgetItem(#TREEVIEW, -1, "VID: $"+RSet(Hex(*node\VID),4,"0"), 0, 1)
+  If *node\IsHighSpeed
+    AddGadgetItem(#TREEVIEW, -1, "High Speed (480Mbps)", 0, 1)
+  Else
+    AddGadgetItem(#TREEVIEW, -1, "Full Speed (12Mbps)", 0, 1) 
   EndIf
-  ProcedureReturn "False"
-EndProcedure
-
-Procedure.i show( *node.FTDI::tNode )
-  PrintN( "---------------------------------------------" + #CRLF$ +
-          "Serial Number: " + *node\SerialNumber + #CRLF$ +
-          "Description:   " + *node\Description + #CRLF$ +
-          "VID:          $" + RSet(Hex(*node\VID),4,"0") + #CRLF$ +
-          "PID:          $" + RSet(Hex(*node\PID),4,"0") + #CRLF$ +
-          "Is Open:       " + boolToStr(*node\IsOpen) + #CRLF$ +
-          "Is High Speed: " + boolToStr(*node\IsHighSpeed) + #CRLF$ +
-          "---------------------------------------------")
-  cnt + 1
+  If *node\IsOpen
+    AddGadgetItem(#TREEVIEW, -1, "Open in another process", 0, 1)
+  EndIf
   ProcedureReturn 0 ;< no match, to force continued enumeration
 EndProcedure
 
-If OpenConsole() And FTDI::Init()
-  PrintN( "Searching: " )
-  FTDI::First( @show() )    ;< use the matcher() to dump nodes
-  PrintN( Str(cnt)+" FTDI devices found." )
-  Input()               
-  CloseConsole()
-EndIf
+Procedure Resize()
+  ResizeGadget(#TREEVIEW, #PB_Ignore, #PB_Ignore,
+               WindowWidth(#MAINWIN)-10, WindowHeight(#MAINWIN)-10)
+EndProcedure
+
+FTDI::Init()
+
+OpenWindow(#MAINWIN, 0, 0, 230, 270, "Detect [0]",
+           #PB_Window_SizeGadget|#PB_Window_ScreenCentered|
+           #PB_Window_SystemMenu)
+TreeGadget(#TREEVIEW, 5, 5, 220,260, #PB_Tree_NoLines)
+BindEvent(#PB_Event_SizeWindow, @Resize(), #MAINWIN)
+
+FTDI::First( @AddToTreeView() )
+
+Define.i event
+Repeat
+  event = WaitWindowEvent()
+;  Select event
+;    Default
+;      ;Debug "Event: $"+RSet(Hex(event),8,"0")
+;  EndSelect
+Until event = #PB_Event_CloseWindow

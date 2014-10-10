@@ -13,12 +13,16 @@
   <section name="data">
     <explorer view="inc\ftdi\" pattern="0"/>
     <log show="1"/>
-    <lastopen date="2014-10-08 21:36" user="Sean" host="CHERNOBYL"/>
+    <lastopen date="2014-10-09 10:28" user="Sean" host="CHERNOBYL"/>
   </section>
   <section name="files">
     <file name="detect\detect.pb">
       <config load="0" scan="0" panel="1" warn="1" lastopen="0" panelstate="++"/>
       <fingerprint md5="6007a2672c8e141ff99503b46cfa62ae"/>
+    </file>
+    <file name="dumpcfg\dumpcfg.pb">
+      <config load="0" scan="0" panel="1" warn="1" lastopen="1" panelstate="++"/>
+      <fingerprint md5="510cfdc03d19289ffa8f649835859cbf"/>
     </file>
     <file name="inc\assert.pbi">
       <config load="0" scan="0" panel="1" warn="1" lastopen="0" panelstate="++"/>
@@ -48,10 +52,6 @@
       <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+++"/>
       <fingerprint md5="d610e3a126e9ade0b7e336b4397696ef"/>
     </file>
-    <file name="dumpcfg\dumpcfg.pb">
-      <config load="0" scan="0" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="510cfdc03d19289ffa8f649835859cbf"/>
-    </file>
     <file name="loadcfg\loadcfg.pb">
       <config load="0" scan="0" panel="1" warn="1" lastopen="0" panelstate="++"/>
       <fingerprint md5="510cfdc03d19289ffa8f649835859cbf"/>
@@ -62,7 +62,7 @@
     </file>
   </section>
   <section name="targets">
-    <target name="detect dbg" enabled="1" default="1">
+    <target name="detect dbg" enabled="1" default="0">
       <inputfile value="detect\detect.pb"/>
       <outputfile value="detect\detect.exe"/>
       <executable value="detect\detect.exe"/>
@@ -82,7 +82,7 @@
       <format exe="default" cpu="1"/>
       <warnings custom="1" type="error"/>
     </target>
-    <target name="dumpcfg dbg" enabled="1" default="0">
+    <target name="dumpcfg dbg" enabled="1" default="1">
       <inputfile value="dumpcfg\dumpcfg.pb"/>
       <outputfile value="dumpcfg\dumpcfg.exe"/>
       <executable value="dumpcfg\dumpcfg.exe"/>
