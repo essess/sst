@@ -1,3 +1,18 @@
 @title detect.exe
-@overview
-A simple app to enumerate all connected FTDI devices. Useful for quick troubleshooting or device examination
+@section Overview
+A simple app to enumerate all connected FTDI devices. Useful for quick troubleshooting or device examination.
+ If you don't know the serial number or description of the device you want to connect to, this is a good way
+ to pick one. The other apps in this suite usually use the serial number (or description) as an identifier
+ to connect against.
+@section Operation
+None. Start the app and it kicks off a discovery sequence and displays the result. The title bar indicates the
+ number of devices found and you can dig deeper by clicking on any of the '+' signs to open or close the desired
+ node. Plug/unplug events also (re)start a device search.
+@section Weirdness
+The FTDI drivers are not threadsafe during search sequences. This is the reason searching takes such a long time after
+ a plug/unplug event. Sometimes the driver returns empty serial numbers and descriptions while capabilities are assesed
+ or another process opens the device. If a device is not getting discovered make sure you haven't already opened it in
+ another process; some software configurations also return empty strings in this scenario (but not all, you may get lucky).
+@indent    @indent    @indent
+  @image detect.png
+@endindent @endindent @endindent

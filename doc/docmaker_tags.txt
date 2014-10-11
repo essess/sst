@@ -151,8 +151,8 @@
 ;   Set color for next word or text in doublequotes to the color of functions.
 ;
 ; @image imageName.ext
-;   Inserts a link to a picture stored in directory "HelpPictures"
-;   under your output directory.
+;   Inserts a link to a picture stored in directory "images"
+;   under your output directory (<output_dir>/images/imagename.ext).
 ;   imageName.ext can be "mypic.png" or "thisPicture.jpg" for example
 ;
 ; @indent

@@ -1,0 +1,16 @@
+@title Feature Requests
+@section General
+  @red ANY?
+@section Documentation
+  @red ANY?
+@section Apps
+@indent
+  @section detect
+    @red ANY?
+  @section loadcfg
+    @red ANY?
+  @section dumpcfg
+    @red ANY?
+  @section modcfg
+    @red ANY?
+@endindent
