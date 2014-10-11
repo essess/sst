@@ -1,26 +1,21 @@
-@Library ftdi
+@Library FTDI
 
-@section Public
-  @indent
-  @section Structures/Types/Prototypes
-  ; tNode, tMatcher
-  @section Interfaces
-  ; iDevice
-  @section Procedures/Functions
-     @fastlink "Init()" @linebreak
-     @fastlink "First()" @linebreak
-     @fastlink "Any()" @linebreak
-  @endindent
+;------------------------------------------------------------------------------
 
-@section Private
-  @indent
-  @section Structures/Types/Prototypes
-  ; todo
-  @section Interfaces
-  ; todo
-  @section Procedures/Functions
-  ; todo
-  @endindent
+@section Structures/Types/Prototypes
+  @keyword Structure: @referencelink "tNode" tNode @linebreak
+  @keyword Structure: @referencelink "tMatcher" tMatcher @linebreak
+@section Interfaces
+  @keyword Interface: @referencelink "iDevice" iDevice @linebreak
+@section Procedures/Functions
+  @fastlink "Init()" @linebreak
+  @fastlink "First()" @linebreak
+  @fastlink "Any()" @linebreak
+
+;------------------------------------------------------------------------------
+
+
+;------------------------------------------------------------------------------
 
 ;------------------------------------------------------------------------------
 
