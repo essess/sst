@@ -13,16 +13,16 @@
   <section name="data">
     <explorer view="inc\ftdi\" pattern="0"/>
     <log show="1"/>
-    <lastopen date="2014-10-10 16:54" user="Sean" host="CHERNOBYL"/>
+    <lastopen date="2014-10-10 22:31" user="Sean" host="CHERNOBYL"/>
   </section>
   <section name="files">
     <file name="detect\detect.pb">
-      <config load="0" scan="0" panel="1" warn="1" lastopen="1" panelstate="++"/>
+      <config load="0" scan="0" panel="1" warn="1" lastopen="0" panelstate="++"/>
       <fingerprint md5="3b554460d6c19c6a53099ab7ef812e93"/>
     </file>
     <file name="dumpcfg\dumpcfg.pb">
-      <config load="0" scan="0" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="510cfdc03d19289ffa8f649835859cbf"/>
+      <config load="0" scan="0" panel="1" warn="1" lastopen="1" panelstate="++"/>
+      <fingerprint md5="c012c18ef9640b799f8dc164669d4886"/>
     </file>
     <file name="inc\assert.pbi">
       <config load="0" scan="0" panel="1" warn="1" lastopen="0" panelstate="++"/>
@@ -30,27 +30,27 @@
     </file>
     <file name="inc\ftdi.pbi">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
-      <fingerprint md5="0aa3f71622a1b598c50024b2eb700d72"/>
+      <fingerprint md5="bb214b045287e911a9954bf03eac8930"/>
     </file>
     <file name="inc\ftdi\classes.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+++"/>
-      <fingerprint md5="d61f3ee03c833a2f58680d02b38c2b67"/>
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+++"/>
+      <fingerprint md5="9b276bfcee917041c5371824255e87c1"/>
     </file>
     <file name="inc\ftdi\dll.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+++"/>
-      <fingerprint md5="658251c12671a116e4e4276741fcd7f0"/>
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+++"/>
+      <fingerprint md5="a9ca99eb0c110d2b5f738b28ef02438b"/>
     </file>
     <file name="inc\ftdi\globals.pbi">
       <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+++"/>
       <fingerprint md5="6a4ee83ccf0d4f17ac37ec43816c3ec6"/>
     </file>
     <file name="inc\ftdi\procs.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+++"/>
-      <fingerprint md5="a494857d7860d99973e05220ebac3c85"/>
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+++"/>
+      <fingerprint md5="22968d2b01295b5df244a03c30afc7f2"/>
     </file>
     <file name="inc\ftdi\types.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+++"/>
-      <fingerprint md5="d610e3a126e9ade0b7e336b4397696ef"/>
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+++"/>
+      <fingerprint md5="aae6c80030013cb4349e65ea7fe9f56e"/>
     </file>
     <file name="loadcfg\loadcfg.pb">
       <config load="0" scan="0" panel="1" warn="1" lastopen="0" panelstate="++"/>
@@ -62,7 +62,7 @@
     </file>
   </section>
   <section name="targets">
-    <target name="detect dbg" enabled="1" default="1">
+    <target name="detect dbg" enabled="1" default="0">
       <inputfile value="detect\detect.pb"/>
       <outputfile value="detect\detect.exe"/>
       <executable value="detect\detect.exe"/>
@@ -82,7 +82,7 @@
       <format exe="default" cpu="1"/>
       <warnings custom="1" type="error"/>
     </target>
-    <target name="dumpcfg dbg" enabled="1" default="0">
+    <target name="dumpcfg dbg" enabled="1" default="1">
       <inputfile value="dumpcfg\dumpcfg.pb"/>
       <outputfile value="dumpcfg\dumpcfg.exe"/>
       <executable value="dumpcfg\dumpcfg.exe"/>

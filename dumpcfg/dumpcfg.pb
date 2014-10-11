@@ -7,6 +7,15 @@
 EnableExplicit
 
 IncludePath "..\inc"
+IncludeFile "assert.pbi"
 IncludeFile "ftdi.pbi"
 
-End -1
+FTDI::Init()
+Define *device.FTDI::iDevice = FTDI::First()
+If *device
+  Debug "SerialNumber: " + *device\SerialNumber()
+  *device = *device\Free()
+  assert( *device=0 )
+Else
+  Debug "No FTDI devices found."
+EndIf

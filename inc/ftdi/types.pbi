@@ -8,4 +8,5 @@
 Structure tDevice
   *vtbl
   *node.tNode
+  hnd.i
 EndStructure
