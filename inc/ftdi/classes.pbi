@@ -9,6 +9,7 @@ DataSection
   iDeviceClass:
   Data.i @prvSerialNumber()
   Data.i @prvDescription()
-  Data.i @prvToStr()
+  Data.i @prvOpen()
+  Data.i @prvClose()
   Data.i @prvFree()
 EndDataSection

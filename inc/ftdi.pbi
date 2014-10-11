@@ -17,16 +17,17 @@ DeclareModule FTDI
   EndStructure
   
   Prototype.i tMatcher( *node.tNode )
-  Declare.i Any() 
+  Declare.i Any()
   Declare.i Init()
   Declare.i First( *matcher.tMatcher=0 )
   
   Interface iDevice
     SerialNumber.s()
     Description.s()
-    ToStr.s()
+    Open.i()
+    Close.i()
     Free.i()
-  EndInterface 
+  EndInterface
   
 EndDeclareModule
 

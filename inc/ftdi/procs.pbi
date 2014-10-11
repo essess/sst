@@ -5,26 +5,39 @@
 ; contact me at the above email address and I can provide you with one.
 ; -----------------------------------------------------------------------------
 
-Procedure.i prvAny( *node.tNode )
-  ProcedureReturn *node
-EndProcedure
-
-Procedure prvFree( *self.tDevice )
-  assert( *self )
-  FreeMemory( *self\node ) : *self\node = 0
-  *self\vtbl = 0 : FreeMemory( *self )
-EndProcedure
-
 Procedure.s prvSerialNumber( *self.tDevice )
+  assert( *self\node )
   ProcedureReturn *self\node\SerialNumber
 EndProcedure
 
 Procedure.s prvDescription( *self.tDevice )
+  assert( *self\node )
   ProcedureReturn *self\node\Description
 EndProcedure
 
-Procedure.s prvToStr( *self.tDevice )
-  ProcedureReturn *self\node\SerialNumber
+Procedure.i prvOpen( *self.tDevice )
+  ; assert hnd = 0
+  ; hnd = open by serial
+  ProcedureReturn 0
+EndProcedure
+
+Procedure.i prvClose( *self.tDevice )
+  ; assert open
+  ; hnd = 0
+  ProcedureReturn 0
+EndProcedure
+
+Procedure.i prvFree( *self.tDevice )
+  FreeMemory( *self\node ) : *self\node = 0
+  *self\vtbl = 0 : FreeMemory( *self )
+  *self = 0 : ProcedureReturn *self
+EndProcedure
+
+Procedure.i prvAny( *node.tNode )
+  If *node And (*node\SerialNumber <> "")
+    ProcedureReturn *node
+  EndIf
+  ProcedureReturn 0
 EndProcedure
 
 Procedure.i Any()

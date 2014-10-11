@@ -85,7 +85,7 @@ Declare.i FT_GetLibraryVersion( *version )
 Declare.i FT_CreateDeviceInfoList( *devcnt )
 Declare.i FT_GetDeviceInfoDetail( idx.i, *flags, *type, *id, *locid, *sn, *desc, *hnd )
 Declare.i FT_GetDeviceInfoList( *array, *devcnt )
-Declare.i FT_Open( idx.i, *hnd )
+Declare.i FT_OpenEx( *arg, flags.l, *hnd )
 Declare.i FT_Close( hnd.i )
 Declare.i FT_GetDriverVersion( hnd.i, *version )
 Declare.l FT_ResetDevice( hnd.i )
@@ -104,7 +104,7 @@ Prototype.l _FT_GetLibraryVersion(*lpdwDLLVersion)
 Prototype.l _FT_CreateDeviceInfoList(*lpdwNumDevs)
 Prototype.l _FT_GetDeviceInfoDetail(dwIndex.l,*lpdwFlags,*lpdwType,*lpdwID,*lpdwLocId,*pcSerialNumber.p-ascii,*pcDescription.p-ascii,*ftHandle)
 Prototype.l _FT_GetDeviceInfoList(*pDest,*lpdwNumDevs)
-Prototype.l _FT_Open(iDevice.i,*ftHandle)
+Prototype.l _FT_OpenEx(*pvArg,dwFlags.l,*ftHandle)
 Prototype.l _FT_Close(ftHandle.i)
 Prototype.l _FT_GetDriverVersion(ftHandle.i,*lpdwDriverVersion)
 Prototype.l _FT_ResetDevice(ftHandle.i)
@@ -123,7 +123,7 @@ Structure DLL
   *FT_CreateDeviceInfoList._FT_CreateDeviceInfoList
   *FT_GetDeviceInfoDetail._FT_GetDeviceInfoDetail
   *FT_GetDeviceInfoList._FT_GetDeviceInfoList
-  *FT_Open._FT_Open
+  *FT_OpenEx._FT_OpenEx
   *FT_Close._FT_Close
   *FT_GetDriverVersion._FT_GetDriverVersion
   *FT_ResetDevice._FT_ResetDevice
@@ -150,7 +150,7 @@ Procedure.i FT_Load()
           \FT_CreateDeviceInfoList = GetFunction( lib, "FT_CreateDeviceInfoList" )
           \FT_GetDeviceInfoDetail = GetFunction( lib, "FT_GetDeviceInfoDetail" )
           \FT_GetDeviceInfoList = GetFunction( lib, "FT_GetDeviceInfoList" )
-          \FT_Open = GetFunction( lib, "FT_Open" )
+          \FT_OpenEx = GetFunction( lib, "FT_OpenEx" )
           \FT_Close = GetFunction( lib, "FT_Close" )
           \FT_GetDriverVersion = GetFunction( lib, "FT_GetDriverVersion" )
           \FT_ResetDevice = GetFunction( lib, "FT_ResetDevice" )
@@ -173,65 +173,81 @@ Procedure.i FT_Load()
 EndProcedure
 
 Procedure.i FT_GetLibraryVersion( *version )
+  assert( *me )
   ProcedureReturn *me\FT_GetLibraryVersion( *version )
 EndProcedure
 
 Procedure.i FT_CreateDeviceInfoList( *devcnt )
+  assert( *me )
   ProcedureReturn *me\FT_CreateDeviceInfoList( *devcnt )
 EndProcedure
 
 Procedure.i FT_GetDeviceInfoDetail( idx.i, *flags, *type, *id, *locid, *sn, *desc, *hnd )
+  assert( *me )
   ProcedureReturn *me\FT_GetDeviceInfoDetail( idx, *flags, *type, *id, *locid, *sn, *desc, *hnd )
 EndProcedure
 
 Procedure.i FT_GetDeviceInfoList( *array, *devcnt )
+  assert( *me )
   ProcedureReturn *me\FT_GetDeviceInfoList( *array, *devcnt )
 EndProcedure
 
-Procedure.i FT_Open( idx.i, *hnd )
-  ProcedureReturn *me\FT_Open( idx, *hnd )
+Procedure.i FT_OpenEx( *arg, flags.l, *hnd )
+  assert( *me )
+  ProcedureReturn *me\FT_OpenEx( *arg, flags.l, *hnd )
 EndProcedure
 
 Procedure.i FT_Close( hnd.i )
+  assert( *me )
   ProcedureReturn *me\FT_Close( hnd.i )
 EndProcedure
 
 Procedure.i FT_GetDriverVersion( hnd.i, *version )
+  assert( *me )
   ProcedureReturn *me\FT_GetDriverVersion( hnd, *version )
 EndProcedure
 
 Procedure.l FT_ResetDevice( hnd.i )
+  assert( *me )
   ProcedureReturn *me\FT_ResetDevice( hnd )
 EndProcedure
 
 Procedure.l FT_Purge( hnd.i, mask.l )
+  assert( *me )
   ProcedureReturn *me\FT_Purge( hnd, mask )
 EndProcedure
 
 Procedure.l FT_SetLatencyTimer( hnd.i, timer.b )
+  assert( *me )
   ProcedureReturn *me\FT_SetLatencyTimer( hnd, timer )
 EndProcedure
 
 Procedure.l FT_SetBitMode( hnd.i, mask.b, mode.b )
+  assert( *me )
   ProcedureReturn *me\FT_SetBitMode( hnd, mask, mode )
 EndProcedure
 
 Procedure.l FT_SetFlowControl( hnd.i, cntrl.w, xon.b=17, xoff.b=19 )
+  assert( *me )
   ProcedureReturn *me\FT_SetFlowControl( hnd, cntrl, xon, xoff )
 EndProcedure
 
 Procedure.l FT_SetDataCharacteristics( hnd.i, len.b, stopbits.b, parity.b )
+  assert( *me )
   ProcedureReturn *me\FT_SetDataCharacteristics( hnd, len, stopbits, parity )
 EndProcedure
 
 Procedure.l FT_SetBaudRate( hnd.i, rate.l )
+  assert( *me )
   ProcedureReturn *me\FT_SetBaudRate( hnd, rate )
 EndProcedure
 
 Procedure.l FT_Write( hnd.i, *buff, writecnt.l, *writtencnt )
+  assert( *me )
   ProcedureReturn *me\FT_Write( hnd, *buff, writecnt, *writtencnt )
 EndProcedure
 
 Procedure.l FT_Read( hnd.i, *buff, readcnt.l, *returncnt )
+  assert( *me )
   ProcedureReturn *me\FT_Read( hnd, *buff, readcnt, *returncnt )
 EndProcedure    
