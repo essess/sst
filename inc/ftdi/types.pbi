@@ -9,4 +9,5 @@ Structure tDevice
   *vtbl
   *node.tNode
   hnd.i
+  *errHandler.tErrorHandler
 EndStructure

@@ -5,12 +5,8 @@
 ; contact me at the above email address and I can provide you with one.
 ; -----------------------------------------------------------------------------
 
-DataSection
-  iDeviceClass:
-  Data.i @prvSerialNumber()
-  Data.i @prvDescription()
-  Data.i @prvSend()
-  Data.i @prvReceive()
-  Data.i @prvRegErrorHandler()
-  Data.i @prvFree()
-EndDataSection
+Structure tDevice
+  *vtbl
+  *node.tNode
+  hnd.i
+EndStructure
