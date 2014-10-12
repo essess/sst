@@ -1,4 +1,4 @@
-@Library FTDI
+@Library Device
 
 ;------------------------------------------------------------------------------
 
@@ -9,7 +9,7 @@
   @keyword Interface: @referencelink "iDevice" iDevice @linebreak
 @section Procedures/Functions
   @fastlink "Init()" @linebreak
-  @fastlink "First()" @linebreak
+  @fastlink "NewDevice()" @linebreak
   @fastlink "Any()" @linebreak
 
 ;------------------------------------------------------------------------------
@@ -28,21 +28,29 @@ none
 
 ;------------------------------------------------------------------------------
 
-@Function *iDevice = First( *matcher.tMatcher=0 )
+@Function *iDevice = NewDevice( *matcher.tMatcher=0 )
 @description
-Finds and returns first matching iDevice
+Finds, opens and returns first matching iDevice. If nothing available, returns
+ null.
 @parameters
-*matcher
+Reference to a @referencelink "tMatcher" tMatcher function. If unspecified, the
+ default @referencelink "tMatcher" tMatcher returned by @fastlink "Any()" is used.
+ is used
 @returnvalue
-*iDevice
+Reference to an @referencelink "iDevice" iDevice, or null if nothing found.
 
 ;------------------------------------------------------------------------------
 
 @Function *tMatcher = Any()
 @description
-Returns a default tMatcher that matches on anything
+Returns a default @referencelink "tMatcher" tMatcher that matches on anything.
 @parameters
 none
 @returnvalue
+Reference to the default internal @referencelink "tMatcher" tMatcher function which
+ accepts the first @referencelink "tNode" tNode discovered.
+@code
+  code
+@endcode
 
 ;------------------------------------------------------------------------------

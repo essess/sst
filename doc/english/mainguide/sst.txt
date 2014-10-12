@@ -32,8 +32,9 @@ contact: @keyword "sstasiak@gmail.com"
 
 @section Code
   @indent
+
     @section Libraries
-    @librarylink ftdi "FTDI::"
+    @librarylink device "Device::"
     @section Reference
     @referencelink "style" "Style Guide" @linebreak
     @referencelink "fformats" "File Formats" @linebreak
