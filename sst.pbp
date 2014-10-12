@@ -11,9 +11,9 @@
     </comment>
   </section>
   <section name="data">
-    <explorer view="inc\" pattern="0"/>
+    <explorer view="inc\device\" pattern="0"/>
     <log show="1"/>
-    <lastopen date="2014-10-12 11:08" user="Sean" host="CHERNOBYL"/>
+    <lastopen date="2014-10-12 11:27" user="Sean" host="CHERNOBYL"/>
   </section>
   <section name="files">
     <file name="detect\detect.pb">
@@ -28,13 +28,9 @@
       <config load="0" scan="0" panel="1" warn="1" lastopen="0" panelstate="++"/>
       <fingerprint md5="51fe044b19519b6a73caaf5dcb2eaae1"/>
     </file>
-    <file name="loadcfg\loadcfg.pb">
-      <config load="0" scan="0" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="510cfdc03d19289ffa8f649835859cbf"/>
-    </file>
-    <file name="modcfg\modcfg.pb">
-      <config load="0" scan="0" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="d9545c4b717ac5669bfb8770f4218548"/>
+    <file name="inc\device.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
+      <fingerprint md5="f003d2c3b128b07d9d3581d6ef2c4342"/>
     </file>
     <file name="inc\device\classes.pbi">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+++"/>
@@ -52,9 +48,17 @@
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+++"/>
       <fingerprint md5="aae6c80030013cb4349e65ea7fe9f56e"/>
     </file>
-    <file name="inc\device.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
-      <fingerprint md5="f003d2c3b128b07d9d3581d6ef2c4342"/>
+    <file name="loadcfg\loadcfg.pb">
+      <config load="0" scan="0" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <fingerprint md5="510cfdc03d19289ffa8f649835859cbf"/>
+    </file>
+    <file name="modcfg\modcfg.pb">
+      <config load="0" scan="0" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <fingerprint md5="d9545c4b717ac5669bfb8770f4218548"/>
+    </file>
+    <file name="inc\device\ftdi.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+++"/>
+      <fingerprint md5="935edb4a3462f47be82d32f19de589ca"/>
     </file>
   </section>
   <section name="targets">
