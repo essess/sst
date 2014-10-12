@@ -5,6 +5,8 @@
 ; contact me at the above email address and I can provide you with one.
 ; -----------------------------------------------------------------------------
 
+#BLKTIME = 100  ;< rx/tx blocking time - temp hack
+
 Procedure.s prvSerialNumber( *self.tDevice )
   assert( *self\node )
   ProcedureReturn *self\node\SerialNumber
@@ -15,22 +17,91 @@ Procedure.s prvDescription( *self.tDevice )
   ProcedureReturn *self\node\Description
 EndProcedure
 
-Procedure.i prvOpen( *self.tDevice )
-  ; assert hnd = 0
-  ; hnd = open by serial
+Procedure prvDefaultErrHandler( code.i, codestr.s )
+  Debug "iDevice() error: $"+RSet(Hex(code),16,"0")+" ["+codestr+"]"
+EndProcedure
+
+Procedure prvError( *self.tDevice, code.i, codestr.s )
+  ; might be a pb bug, need to break out the
+  ; fcall from *self before calling it, otherwise
+  ; the compiler chokes
+  Protected *ehnd.tErrHandler = *self\errHandler
+  *ehnd( code, codestr )
+EndProcedure
+
+Procedure.i prvSetup( *self.tDevice )
+  If FT_SUCCESS(FT_StopInTask( *self\hnd )) And
+     FT_SUCCESS(FT_SetBaudRate( *self\hnd, 115200 )) And
+     FT_SUCCESS(FT_SetDataCharacteristics( *self\hnd, #FT_BITS_8, #FT_STOP_BITS_1, #FT_PARITY_ODD )) And
+     FT_SUCCESS(FT_Purge( *self\hnd, #FT_PURGE_RX|#FT_PURGE_TX )) And
+     FT_SUCCESS(FT_SetTimeouts( *self\hnd, #BLKTIME, #BLKTIME )) And
+     FT_SUCCESS(FT_SetLatencyTimer( *self\hnd, 1 )) And
+     FT_SUCCESS(FT_RestartInTask( *self\hnd ))
+    ProcedureReturn ~0
+  EndIf
   ProcedureReturn 0
 EndProcedure
 
 Procedure.i prvClose( *self.tDevice )
-  ; assert open
-  ; hnd = 0
+  assert( *self\node\IsOpen )
+  If FT_SUCCESS(FT_Close( *self\hnd ))
+    *self\hnd = 0
+    *self\node\IsOpen = 0
+    ProcedureReturn ~0
+  EndIf
   ProcedureReturn 0
 EndProcedure
 
+Procedure.i prvOpen( *self.tDevice )
+  assert( Not *self\node\IsOpen )
+  Dim sn.b(64)
+  PokeS( @sn(), *self\node\SerialNumber, -1, #PB_Ascii )
+  If FT_SUCCESS(FT_OpenEx( @sn(), #FT_OPEN_BY_SERIAL_NUMBER, @*self\hnd ))
+    assert( *self\hnd )
+    *self\node\IsOpen = ~0
+    Protected.l dv
+    assert( FT_SUCCESS(FT_GetDriverVersion( *self\hnd, @dv )) )
+    Debug "FT_GetDriverVersion(): $"+RSet(Hex(dv),8,"0")
+    If Not prvSetup( *self )
+      prvClose( *self )
+    EndIf
+  EndIf
+  FreeArray( sn() )
+  ProcedureReturn *self\hnd
+EndProcedure
+
+Procedure.i prvSend( *self.tDevice, *buf, len.i )
+  Protected.i cnt=0, ftstatus=#FT_OK
+  ftstatus = FT_Write( *self\hnd, *buf, len, @cnt )
+  If Not FT_SUCCESS(ftstatus)
+    prvError( *self, ftstatus, prvFTStatusToStr(ftstatus) )
+  EndIf
+  ProcedureReturn cnt
+EndProcedure
+
+Procedure.i prvReceive( *self.tDevice, *buf, len.i )
+  Protected.i cnt=0, ftstatus=#FT_OK
+  ftstatus = FT_Read( *self\hnd, *buf, len, @cnt )
+  If Not FT_SUCCESS(ftstatus)
+    prvError( *self, ftstatus, prvFTStatusToStr(ftstatus) )
+  EndIf
+  ProcedureReturn cnt
+EndProcedure
+
 Procedure.i prvFree( *self.tDevice )
-  FreeMemory( *self\node ) : *self\node = 0
-  *self\vtbl = 0 : FreeMemory( *self )
-  *self = 0 : ProcedureReturn *self
+  If prvClose( *self )
+    FreeMemory( *self\node ) : *self\node=0
+    *self\vtbl=0
+    FreeMemory( *self ) : *self=0
+  EndIf
+  ProcedureReturn *self
+EndProcedure
+
+Procedure.i prvRegErrorHandler( *self.tDevice, *handler.tErrHandler )
+  assert( *handler )
+  Protected *prev.tErrHandler = *self\errHandler
+  *self\errHandler = *handler
+  ProcedureReturn( *prev )
 EndProcedure
 
 Procedure.i prvAny( *node.tNode )
@@ -50,7 +121,6 @@ EndProcedure
 
 Procedure.i First( *matcher.tMatcher=0 )
   If Not *matcher
-    Debug "*matcher = Any()"
     *matcher = Any()
   EndIf
   Protected.i cnt, i, ftstatus
@@ -77,9 +147,13 @@ Procedure.i First( *matcher.tMatcher=0 )
           assert( *device )
           *device\vtbl = ?iDeviceClass
           *device\node = *node
-          ProcedureReturn *device
+          prvRegErrorHandler( *device, @prvDefaultErrHandler() )
+          If prvOpen( *device )
+            ProcedureReturn *device
+          EndIf
+          FreeMemory( *device ) : *device=0
         EndIf
-        FreeMemory( *node )
+        FreeMemory( *node ) : *node=0
       Else
         Debug prvFTStatusToStr(ftstatus) + " = FT_GetDeviceInfoDetail()"
         Break

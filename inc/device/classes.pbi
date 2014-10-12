@@ -7,10 +7,7 @@
 
 DataSection
   iDeviceClass:
-  Data.i @prvSerialNumber()
-  Data.i @prvDescription()
   Data.i @prvSend()
   Data.i @prvReceive()
-  Data.i @prvRegErrorHandler()
   Data.i @prvFree()
 EndDataSection

@@ -18,8 +18,8 @@ DeclareModule Device
   Declare.i NewDevice( *matcher.tMatcher=0 )
   
   Interface iDevice
-    Send.i( *buf, len.i )
-    Receive.i( *buf, len.i )
+    Send.i( *buf, bsize.i, *cnt )
+    Receive.i( *buf, bsize.i, *cnt )
     Free.i()
   EndInterface
   
@@ -28,11 +28,11 @@ EndDeclareModule
 Module Device
   
   IncludeFile "assert.pbi"
-  IncludeFile "ftdi\dll.pbi"
+  IncludeFile "device\dll.pbi"
   
-  IncludeFile "ftdi\types.pbi"
-  IncludeFile "ftdi\globals.pbi"
-  IncludeFile "ftdi\procs.pbi"
-  IncludeFile "ftdi\classes.pbi"
+  IncludeFile "device\types.pbi"
+  IncludeFile "device\globals.pbi"
+  IncludeFile "device\procs.pbi"
+  IncludeFile "device\classes.pbi"
   
 EndModule
