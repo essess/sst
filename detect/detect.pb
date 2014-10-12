@@ -6,8 +6,7 @@
 ; -----------------------------------------------------------------------------
 EnableExplicit
 
-IncludePath "..\inc"
-IncludeFile "ftdi.pbi"
+IncludeFile "..\inc\device.pbi"
 
 Enumeration
   #MAINWIN
@@ -16,25 +15,10 @@ EndEnumeration
 
 Global.i cnt = 0, *thread = 0
 
-Procedure.i AddToTreeView( *node.FTDI::tNode )
-  ; ftdi driver returns junk (empty string) sometimes - not sure
-  ; if I should 'fix' in the ftdi:: namespace or simply filter here
-  ; each has its drawbacks
-  If *node\SerialNumber <> ""
-    cnt + 1 : SetWindowTitle(#MAINWIN, "Detect ["+Str(cnt)+"]")
-    AddGadgetItem(#TREEVIEW, -1, *node\SerialNumber, 0, 0)
-    AddGadgetItem(#TREEVIEW, -1, *node\Description, 0, 1)
-    AddGadgetItem(#TREEVIEW, -1, "PID: $"+RSet(Hex(*node\PID),4,"0"), 0, 1)
-    AddGadgetItem(#TREEVIEW, -1, "VID: $"+RSet(Hex(*node\VID),4,"0"), 0, 1)
-    If *node\IsHighSpeed
-      AddGadgetItem(#TREEVIEW, -1, "High Speed (480Mbps)", 0, 1)
-    Else
-      AddGadgetItem(#TREEVIEW, -1, "Full Speed (12Mbps)", 0, 1) 
-    EndIf
-    If *node\IsOpen
-      AddGadgetItem(#TREEVIEW, -1, "Open in another process", 0, 1)
-    EndIf
-  EndIf
+Procedure.i AddToTreeView( *node.Device::tNode )
+  cnt + 1 : SetWindowTitle(#MAINWIN, "Detect ["+Str(cnt)+"]")
+  AddGadgetItem(#TREEVIEW, -1, *node\SerialNumber, 0, 0)
+  AddGadgetItem(#TREEVIEW, -1, *node\Description, 0, 1)
   ProcedureReturn 0 ;< no match, to force continued enumeration
 EndProcedure
 
@@ -47,7 +31,7 @@ Procedure.i EnumDevices( *unused )
   ClearGadgetItems(#TREEVIEW)
   SetWindowTitle(#MAINWIN, "Detect [Searching]") : cnt = 0
   Delay(5000) ; pos ftdi driver needs to 'stabilize' upon plug/unplug
-  FTDI::First( @AddToTreeView() )
+  Device::NewDevice( @AddToTreeView() )
 EndProcedure
 
 Procedure WinProcCB(hWnd, uMsg, WParam, LParam)
@@ -66,10 +50,10 @@ EndProcedure
 OpenWindow(#MAINWIN, 0, 0, 230, 270, "Detect",
            #PB_Window_SizeGadget|#PB_Window_ScreenCentered|
            #PB_Window_SystemMenu)
-TreeGadget(#TREEVIEW, 5, 5, 220,260, #PB_Tree_NoLines)
+TreeGadget(#TREEVIEW, 5, 5, 220,260)
 BindEvent(#PB_Event_SizeWindow, @Resize(), #MAINWIN)
 
-FTDI::Init()
+Device::Init()
 *thread = CreateThread(@EnumDevices(),0)
 SetWindowCallback(@WinProcCB(),#MAINWIN)
 

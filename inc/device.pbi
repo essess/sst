@@ -28,7 +28,7 @@ EndDeclareModule
 Module Device
   
   IncludeFile "assert.pbi"
-  IncludeFile "device\dll.pbi"
+  IncludeFile "device\ftdi.pbi"
   
   IncludeFile "device\types.pbi"
   IncludeFile "device\globals.pbi"
