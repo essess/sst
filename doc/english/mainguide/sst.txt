@@ -39,6 +39,7 @@ contact: @keyword "sstasiak@gmail.com"
     @referencelink "style" "Style Guide" @linebreak
     @referencelink "fformats" "File Formats" @linebreak
     @referencelink "freq" "Feature Requests" @linebreak
+    @referencelink "fwish" "Firmware Wishes" @linebreak
 
 ;    @referencelink "commandindex" "Index of functions" @linebreak        ;< do manually
 ;    @referencelink "pbconstants" "Constants" @linebreak                  ;< do manually

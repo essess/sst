@@ -1,0 +1,9 @@
+@title Firmware Wishes
+@section Overview
+ The following are my wishes about how I'd like to see the firmware change AND the reasons why
+@section undeprecate SET_ASYNC_DATALOG_TYPE
+ I want to immediately silence the line if I need to. Right now, this is the only option to do that with.
+@section how do I know what is in the 'chunks' of RESPONSE_BASIC_DATALOG ?
+ I see that I could track back to a CORE_VARS_LOCATION_ID from the address that the chunk points to, but that
+ doesn't tell me anything about what is contained in the chunk. Maybe this is by design and you have to
+ draw the line somewhere and start working off of assumptions
