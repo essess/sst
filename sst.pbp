@@ -11,41 +11,57 @@
     </comment>
   </section>
   <section name="data">
-    <explorer view="inc\device\" pattern="0"/>
+    <explorer view="inc\channel\" pattern="0"/>
     <log show="1"/>
-    <lastopen date="2014-10-12 11:27" user="Sean" host="CHERNOBYL"/>
+    <lastopen date="2014-10-17 18:35" user="Sean" host="CHERNOBYL"/>
   </section>
   <section name="files">
     <file name="detect\detect.pb">
       <config load="0" scan="0" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="3b554460d6c19c6a53099ab7ef812e93"/>
+      <fingerprint md5="7a76f18e4cb720744bbcdb4300aa479f"/>
     </file>
     <file name="dumpcfg\dumpcfg.pb">
       <config load="0" scan="0" panel="1" warn="1" lastopen="1" panelstate="++"/>
-      <fingerprint md5="05e06453e9a8cae822c5f2978784a52b"/>
+      <fingerprint md5="0a67d5e251006669fc4e20388d594b47"/>
     </file>
     <file name="inc\assert.pbi">
       <config load="0" scan="0" panel="1" warn="1" lastopen="0" panelstate="++"/>
       <fingerprint md5="51fe044b19519b6a73caaf5dcb2eaae1"/>
     </file>
-    <file name="inc\device.pbi">
+    <file name="inc\channel.pbi">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
-      <fingerprint md5="f003d2c3b128b07d9d3581d6ef2c4342"/>
+      <fingerprint md5="1f9f83357016bc2a45e3b5d7d61a50ba"/>
+    </file>
+    <file name="inc\channel\classes.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+++"/>
+      <fingerprint md5="d5948345b2502b04821701872d4c7ff5"/>
+    </file>
+    <file name="inc\channel\procs.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+++"/>
+      <fingerprint md5="1ca5d904cbda43ede7f0db42542beb6f"/>
+    </file>
+    <file name="inc\channel\types.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+++"/>
+      <fingerprint md5="3910733ff04d6599a461c4992167cb19"/>
+    </file>
+    <file name="inc\device.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <fingerprint md5="ca57ee6c1ac307d062aed3c09f0759c5"/>
     </file>
     <file name="inc\device\classes.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+++"/>
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+++"/>
       <fingerprint md5="75957cbd8df23733fc39ac07481b4aa8"/>
     </file>
-    <file name="inc\device\globals.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+++"/>
-      <fingerprint md5="6a4ee83ccf0d4f17ac37ec43816c3ec6"/>
+    <file name="inc\device\ftdi.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+++"/>
+      <fingerprint md5="935edb4a3462f47be82d32f19de589ca"/>
     </file>
     <file name="inc\device\procs.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+++"/>
-      <fingerprint md5="fa67c353c6531d4f057de7f6248d4706"/>
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+++"/>
+      <fingerprint md5="c3758543e901bb311599e8c478576a36"/>
     </file>
     <file name="inc\device\types.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+++"/>
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+++"/>
       <fingerprint md5="aae6c80030013cb4349e65ea7fe9f56e"/>
     </file>
     <file name="loadcfg\loadcfg.pb">
@@ -55,10 +71,6 @@
     <file name="modcfg\modcfg.pb">
       <config load="0" scan="0" panel="1" warn="1" lastopen="0" panelstate="++"/>
       <fingerprint md5="d9545c4b717ac5669bfb8770f4218548"/>
-    </file>
-    <file name="inc\device\ftdi.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+++"/>
-      <fingerprint md5="935edb4a3462f47be82d32f19de589ca"/>
     </file>
   </section>
   <section name="targets">
