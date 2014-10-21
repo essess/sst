@@ -6,8 +6,21 @@
 ; -----------------------------------------------------------------------------
 
 DataSection
-  iChannelClass:
+  
+iChannelClass:
   Data.i @prvSend()
+  Data.i @prvExchange()
   Data.i @prvCounters()
-  Data.i @prvFree()
+  Data.i @prvChannelFree()
+  
+iPktClass:
+  Data.i @prvBuffer()
+  Data.i @prvLength()
+  Data.i @prvSetLength()
+  Data.i @prvPktFree()  
+iPktQueueClass:
+  Data.i @prvPush()
+  Data.i @prvPop()
+  Data.i @prvReset()
+  
 EndDataSection

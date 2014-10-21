@@ -9,14 +9,13 @@ XIncludeFile "device.pbi"
 
 DeclareModule Channel
   
-  #PKT_BUFSIZE = (8*1024)
-  Structure tPkt
-    buf.a[#PKT_BUFSIZE]
-    len.i
-  EndStructure
-  
-  Declare.i NewPkt( *pkt.tPkt=0 ) ;< optional copy to new
-  Declare.i FreePkt( *pkt.tPkt )  ;< destroy pkt
+  Interface iPkt
+    Buffer.i()
+    Length.i()
+    SetLength( len.i )
+    Free.i()
+  EndInterface
+  Declare.i NewPkt( size.i )
   
   Structure tTX
     packets.i
@@ -33,16 +32,19 @@ DeclareModule Channel
   Structure tCounters
     tx.tTX
     rx.tRX
+    orphans.i
+    exchanges.i
   EndStructure
   
   Enumeration        
     #CHANEVT_START      ;< *arg is ms timestamp
-    #CHANEVT_RECVPKT    ;<      is tPkt
+    #CHANEVT_ORPHANPKT  ;<      is iPkt
     #CHANEVT_STOP       ;<      is ms timestamp
   EndEnumeration
   
   Interface iChannel
-    Send.i( *pkt.tPkt )
+    Send.i( *pkt.iPkt )
+    Exchange.i( *pkt.iPkt, timeout.i=20 )
     Counters.i( *counts.tCounters )
     Free.i( *counts.tCounters=0 )
   EndInterface
