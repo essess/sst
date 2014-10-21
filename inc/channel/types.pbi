@@ -5,10 +5,11 @@
 ; contact me at the above email address and I can provide you with one.
 ; -----------------------------------------------------------------------------
 
-#TXRX_BUFSIZE = 2*#PKT_BUFSIZE    ;< encoding/decoding couldn't possibly
-Structure tBuf                   ;  be worse than this!
+#TXRX_BUFSIZE = (1*1024)
+Structure tBuf
   buf.a[#TXRX_BUFSIZE]
   len.i
+  *mutex
 EndStructure
 
 Structure tChannel
@@ -20,4 +21,21 @@ Structure tChannel
   counts.tCounters
   tx.tBuf
   rx.tBuf
+EndStructure
+
+Structure tPkt
+  *vtbl.iPkt
+  size.i
+  len.i
+  *buf
+EndStructure
+
+Interface iPktQueue Extends iPkt
+  Push( byte.a )
+  Pop.a()
+  Reset()
+EndInterface
+
+Structure tOverlay ;< avoid ugly pb pointer math and peek/poke nonsense
+  bytes.a[64*1024]
 EndStructure

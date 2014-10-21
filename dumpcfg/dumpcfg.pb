@@ -23,12 +23,13 @@ EndProcedure
 Procedure ChannelEvent( *c.iChannel, evt.i, *arg )
   
   Select evt
-    Case #CHANEVT_RECVPKT
-      ;Debug "#CHANEVT_RECVPKT"
+    Case #CHANEVT_ORPHANPKT
+      ;      Debug "#CHANEVT_ORPHANPKT"
       assert( *arg )
-      Protected.tPkt *pkt = *arg
-      If *pkt\len <> 103
-        Debug "*pkt\len: "+Str(*pkt\len)
+      Protected.iPkt *pkt = *arg
+      If *pkt\Length() <> 103
+        Debug "ORPHAN (Exchange() missed one)"
+        ShowMemoryViewer( *pkt\Buffer(), *pkt\Length() )
       EndIf
     Case #CHANEVT_START
       Debug "#CHANEVT_START: "+Str(*arg)+"ms"
@@ -38,32 +39,47 @@ Procedure ChannelEvent( *c.iChannel, evt.i, *arg )
   
 EndProcedure
 
+
+Structure tHdr
+  flags.a
+  cmd.w
+EndStructure
+
+Structure tTagHdr Extends tHdr
+  tag.a
+EndStructure
+
+Structure tLenHdr Extends tHdr
+  len.w
+EndStructure
+
+Structure tTagLenHdr Extends tHdr
+  tag.a
+  len.w
+EndStructure
+
+Structure tSTFU Extends tTagHdr
+  logtype.a
+EndStructure
+
 Device::Init()
 Define.iChannel *c = NewChannel( NewDevice(@First()), @ChannelEvent() )
 If *c
-  Define.tPkt pkt
-
-  ; fill *buf
-  ;*buf = 0x01 0x01 0x94 0x00 0x01 0x00
-  pkt\buf[0] = $01
-  pkt\buf[1] = $ff;$01
-  pkt\buf[2] = $ff;$94
-  pkt\buf[3] = $00
-  pkt\buf[4] = $01
-  pkt\buf[5] = $00
-  pkt\len = 6 ;< 1-flags,2-id,2-len,1-cmdarg
-              ;  ShowMemoryViewer(*pkt\buf, *pkt\len)
-;  Define.i i=0
-;  For i=0 To 1000
-;    Debug "Send Start ["+Str(i)+"]"
-    assert( *c\Send(@pkt) ) ; watch for stream to die
-    Debug "Sent"
-;    Delay(0)
-;  Next
-
+  Define.iPkt *p = NewPkt( SizeOf(tSTFU) ) : assert( *p )
+  Define.tSTFU *ovr = *p\Buffer() : assert( *ovr )
+  *ovr\flags = $04
+  *ovr\cmd = $9401  ;< big endian
+  *ovr\logtype = $00
+  *p\SetLength( SizeOf(tSTFU) )
+  ;ShowMemoryViewer( *p\Buffer(), *p\Length() )
   
-  
-  Delay(600000)
+  Define.i i
+  For i=1 To 300
+    Debug "Send Start ["+Str(i)+"]"
+    *ovr\tag = i & $ff
+    ' start here : flesh out exchange() and test
+  Next
+  *p = *p\Free() : assert( *p=0 )
   Define counts.tCounters
   *c = *c\Free( @counts ) : assert( *c=0 ) ;< device automatically free'd too
   Debug "Counts:"
@@ -76,6 +92,8 @@ If *c
   Debug "TX Packets: "+Str(counts\tx\packets)
   Debug "TX Bytes: "+Str(counts\tx\bytes)
   Debug "TX Overhead: "+Str(counts\tx\overhead)
+  Debug "Orphans: "+Str(counts\orphans)
+  Debug "Exchanges: "+Str(counts\exchanges)
 Else
   Debug "No devices found."
 EndIf
