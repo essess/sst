@@ -6,16 +6,12 @@
 ; -----------------------------------------------------------------------------
 
 XIncludeFile "device.pbi"
+XIncludeFile "packet.pbi"
 
 DeclareModule Channel
   
-  Interface iPkt
-    Buffer.i()
-    Length.i()
-    SetLength( len.i )
-    Free.i()
-  EndInterface
-  Declare.i NewPkt( size.i )
+  UseModule Packet
+  UseModule Device
   
   Structure tTX
     packets.i
@@ -33,31 +29,30 @@ DeclareModule Channel
     tx.tTX
     rx.tRX
     orphans.i
-    exchanges.i
+    good_exchanges.i
+    failed_exchanges.i
   EndStructure
   
   Enumeration        
     #CHANEVT_START      ;< *arg is ms timestamp
-    #CHANEVT_ORPHANPKT  ;<      is iPkt
+    #CHANEVT_ORPHANPKT  ;<      is tPkt
     #CHANEVT_STOP       ;<      is ms timestamp
   EndEnumeration
   
   Interface iChannel
-    Send.i( *pkt.iPkt )
-    Exchange.i( *pkt.iPkt, timeout.i=20 )
+    Send.i( *pkt.tPkt )
+    Exchange.i( *pkt.tPkt, timeout.i=30 )
     Counters.i( *counts.tCounters )
     Free.i( *counts.tCounters=0 )
   EndInterface
   Prototype tChannelEvent( *c.iChannel, evt.i, *arg )
-  Declare.i NewChannel( *device.Device::iDevice, evtHandler.tChannelEvent )
+  Declare.i NewChannel( *d.iDevice, *evtHandler.tChannelEvent )
   
 EndDeclareModule
 
 Module Channel
-  
   IncludeFile "assert.pbi"
   IncludeFile "channel\types.pbi"
   IncludeFile "channel\procs.pbi"
   IncludeFile "channel\classes.pbi"
-  
 EndModule

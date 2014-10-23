@@ -5,13 +5,16 @@
 ; contact me at the above email address and I can provide you with one.
 ; -----------------------------------------------------------------------------
 
-Structure tChannel
-  *vtbl.iChannel
-  *dev.iDevice
-  *evtHandler.tChannelEvent
-  *thread
-  *txmutex
-  *pkt.tPkt      ;< exchange packet reference
-  die.i
-  counts.tCounters
-EndStructure
+Procedure.i NewPkt( flags.a=0 )
+  Protected.tPkt *self = AllocateMemory( SizeOf(tPkt) ) : assert( *self )
+  *self\len = 0
+  *self\buf[0] = flags & (#LENGTH|#NACK|#TAG)
+  ProcedureReturn *self
+EndProcedure
+
+Procedure.i FreePkt( *pkt.tPkt )
+  assert( *pkt )
+  *pkt\len = 0
+  FreeMemory( *pkt ) : *pkt = 0
+  ProcedureReturn *pkt
+EndProcedure

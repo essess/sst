@@ -5,231 +5,230 @@
 ; contact me at the above email address and I can provide you with one.
 ; -----------------------------------------------------------------------------
 
-Procedure.i prvBuffer( *self.tPkt )
-  assert( *self\buf )
-  ProcedureReturn *self\buf ;< READ-ONLY
+Procedure.a prvGenTag()
+  ; $80 -> $ff are reserved for Exchange()
+  Static.a tag = $ff : tag + 1
+  If tag < $80 : tag = $80 : EndIf
+  ProcedureReturn tag
 EndProcedure
 
-Procedure.i prvLength( *self.tPkt )
-  ProcedureReturn *self\len
-EndProcedure
-
-Procedure prvSetLength( *self.tPkt, len.i )
-  assert( len <= *self\size )
-  *self\len = len
-EndProcedure
-
-Procedure prvPush( *self.tPkt, byte.a )
-  assert( *self\len <= *self\size )
-  PokeA( *self\buf+*self\len, byte )
-  *self\len+1 ;< postinc
-EndProcedure
-
-Procedure.a prvPop( *self.tPkt )
-  assert( *self\len > 0 )
-  *self\len-1 ;< predec
-  ProcedureReturn PeekA( *self\buf+*self\len )
-EndProcedure
-
-Procedure prvReset( *self.tPkt )
-  prvSetLength( *self, 0 )
-EndProcedure
-
-Procedure.i prvPktFree( *self.tPkt )
-  assert( *self\buf )
-  FreeMemory( *self\buf ) : *self\buf=0
-  FreeMemory( *self ) : *self=0
-  ProcedureReturn *self
-EndProcedure
-
-Procedure.i NewPkt( size.i )
-  Protected.tPkt *self=0 : assert( size )
-  If size
-    *self = AllocateMemory( SizeOf(tPkt) ) : assert( *self )
-    If *self
-      *self\vtbl = ?iPktClass
-      *self\buf  = AllocateMemory( size ) : assert( *self\buf )
-      *self\size = size
-      *self\len  = 0
-    EndIf
-  EndIf
-  ProcedureReturn *self
-EndProcedure
-
-; -----------------------------------------------------------------------------
-
-Procedure.i prvChkEncode( *dst.tOverlay, *src.tOverlay, srclen.i )
+Procedure.i prvChkEncode( *dst.tPkt, *src.tPkt, srclen.i )
+  
   Protected.i dstidx=0, srcidx=0, chksum.a=0
-  *dst\bytes[dstidx]=$aa : dstidx+1             ;< STX
+  *dst\buf[dstidx]=$aa : dstidx+1             ;< STX
   While srcidx < srclen
-    Select *src\bytes[srcidx]
+    Select *src\buf[srcidx]
       Case $aa
-        *dst\bytes[dstidx]=$bb : dstidx+1
-        *dst\bytes[dstidx]=$55 : dstidx+1
+        *dst\buf[dstidx]=$bb : dstidx+1
+        *dst\buf[dstidx]=$55 : dstidx+1
       Case $bb
-        *dst\bytes[dstidx]=$bb : dstidx+1
-        *dst\bytes[dstidx]=$44 : dstidx+1
+        *dst\buf[dstidx]=$bb : dstidx+1
+        *dst\buf[dstidx]=$44 : dstidx+1
       Case $cc
-        *dst\bytes[dstidx]=$bb : dstidx+1
-        *dst\bytes[dstidx]=$33 : dstidx+1
+        *dst\buf[dstidx]=$bb : dstidx+1
+        *dst\buf[dstidx]=$33 : dstidx+1
       Default
-        *dst\bytes[dstidx]=*src\bytes[srcidx] : dstidx+1
+        *dst\buf[dstidx]=*src\buf[srcidx] : dstidx+1
     EndSelect
-    chksum + *src\bytes[srcidx] : srcidx+1
+    assert( dstidx <= #BUFSIZE )
+    chksum + *src\buf[srcidx] : srcidx+1
   Wend
   Select chksum
     Case $aa
-      *dst\bytes[dstidx]=$bb : dstidx+1
-      *dst\bytes[dstidx]=$55 : dstidx+1
+      *dst\buf[dstidx]=$bb : dstidx+1
+      *dst\buf[dstidx]=$55 : dstidx+1
     Case $bb
-      *dst\bytes[dstidx]=$bb : dstidx+1
-      *dst\bytes[dstidx]=$44 : dstidx+1
+      *dst\buf[dstidx]=$bb : dstidx+1
+      *dst\buf[dstidx]=$44 : dstidx+1
     Case $cc
-      *dst\bytes[dstidx]=$bb : dstidx+1
-      *dst\bytes[dstidx]=$33 : dstidx+1
+      *dst\buf[dstidx]=$bb : dstidx+1
+      *dst\buf[dstidx]=$33 : dstidx+1
     Default
-      *dst\bytes[dstidx]=chksum : dstidx+1
+      *dst\buf[dstidx]=chksum : dstidx+1
   EndSelect
-  *dst\bytes[dstidx]=$cc : dstidx+1             ;< ETX
+  *dst\buf[dstidx]=$cc : dstidx+1             ;< ETX
+  assert( dstidx <= #BUFSIZE )
   ProcedureReturn dstidx
 EndProcedure
 
-Procedure.i prvSend( *self.tChannel, *pkt.iPkt )
+Procedure.i prvSend( *self.tChannel, *pkt.tPkt )
+  Protected.tPkt tx
+  tx\len = prvChkEncode( @tx\buf, @*pkt\buf, *pkt\len )
+  assert( tx\len >= *pkt\len )
+  assert( tx\len <= #BUFSIZE )
+  If *self\dev\Send( @tx\buf, tx\len, @tx\len )
+    *self\counts\tx\packets + 1
+    *self\counts\tx\bytes + tx\len
+    *self\counts\tx\overhead + (tx\len-*pkt\len)
+    ProcedureReturn ~0
+  EndIf
+  ProcedureReturn 0  
+EndProcedure
+
+Procedure.i prvGuardedSend( *self.tChannel, *pkt.tPkt )
   assert( *pkt )
+  assert( *pkt\len <= #BUFSIZE )
+  LockMutex( *self\txmutex )
+  Protected.i retval = prvSend( *self, *pkt )
+  UnlockMutex( *self\txmutex )
+  ProcedureReturn retval
+EndProcedure
+
+Procedure.i prvExchange( *self.tChannel, *pkt.tPkt, timeout.i=20 )
+  assert( *pkt )
+  assert( *pkt\len <= #BUFSIZE )
+  assert( PktHasTag(*pkt) )
+  assert( timeout>0 And timeout<3000 )
+  assert( *self\pkt=0 )
+  LockMutex( *self\txmutex )
+  PktTag(*pkt) = prvGenTag() : assert( PktTag(*pkt) >= $80 )
   Protected.i retval=0
-  If *pkt\Length() < #TXRX_BUFSIZE
-    LockMutex( *self\tx\mutex ) ;< *self\tx\buf is not threadsafe!
-    *self\tx\len = prvChkEncode( @*self\tx\buf, *pkt\Buffer(), *pkt\Length() )
-    assert( *self\tx\len >= *pkt\Length() )
-    retval = *self\dev\Send( @*self\tx\buf, *self\tx\len, @*self\tx\len )
-    If retval
-      *self\counts\tx\packets + 1
-      *self\counts\tx\bytes + *self\tx\len
-      *self\counts\tx\overhead + (*self\tx\len-*pkt\Length())
+  *self\pkt = *pkt
+  If prvSend( *self, *pkt )
+    Protected.i time = timeout
+    While time>0 And *self\pkt
+      Delay(1) : time-1
+    Wend
+    If Not *self\pkt
+      retval=~0 ;< this is the ultimate indicator of matched reply
+      Debug "Exchange[$"+RSet(Hex(PktTag(*pkt)),2,"0")+"] Time: "+Str(timeout-time)+"ms"
+      *self\counts\good_exchanges+1
     EndIf
-    UnlockMutex( *self\tx\mutex )
-  Else
-    Debug "*pkt\Length() exceeds #TXRX_BUFSIZE"
+  EndIf
+  *self\pkt = 0
+  UnlockMutex( *self\txmutex )
+  If Not retval
+    *self\counts\failed_exchanges+1
   EndIf
   ProcedureReturn retval
 EndProcedure
 
 Procedure.i prvCounters( *self.tChannel, *counts.tCounters )
   If *counts
-    CopyStructure( @*self\counts, *counts, tCounters )
+    CopyMemory( @*self\counts, *counts, SizeOf(tCounters) )
     ProcedureReturn ~0
   EndIf
   ProcedureReturn 0
 EndProcedure
 
 Procedure prvEvtHandler( *self.tChannel, evt.i, *arg )
-  ; filter from our own thread in case we need
-  ; to intercept reply pkts for an exchange()
-;  Select evt
-  *self\evtHandler( *self, evt, *arg ) ; TODO: just pass through for now
+  If evt = #CHANEVT_ORPHANPKT
+    Protected *pkt.tPkt = *arg
+    assert( *pkt\len <= #BUFSIZE )
+    If *self\pkt And PktHasTag(*pkt) And PktTag(*pkt)=PktTag(*self\pkt) ;< match ?
+      CopyMemory( *pkt, *self\pkt, *pkt\len )
+      *self\pkt\len = *pkt\len
+      *self\pkt = 0
+      ProcedureReturn
+    Else
+      *self\counts\orphans + 1 ;< spurious/async, aka an orphan
+    EndIf
+  EndIf
+  *self\evtHandler( *self, evt, *arg )
 EndProcedure
 
 Procedure prvThread( *self.tChannel )
   assert( *self )
-  Protected *pkt.iPktQueue=0, prevbyte.a=0, chksum.i=0
-
+  Protected *pkt.tPkt=0, esc.i=0, chksum.i=0, rx.tPkt
   prvEvtHandler( *self, #CHANEVT_START, ElapsedMilliseconds() )
-  While Not TryLockMutex(*self\mutex) And 
-         *self\dev\Receive(@*self\rx\buf, #TXRX_BUFSIZE, @*self\rx\len)
-    *self\counts\rx\bytes + *self\rx\len
+  While Not *self\die And *self\dev\Receive(@rx\buf, #BUFSIZE, @rx\len)
+    *self\counts\rx\bytes + rx\len
     Protected.i idx=0
-    While idx < *self\rx\len
-      Protected.a byte = *self\rx\buf[idx]
+    While idx < rx\len
+      assert( idx < #BUFSIZE )
+      Protected.a byte = rx\buf[idx]
       If *pkt
-        Select byte
-          Case $55,$44,$33
-            If prevbyte = $bb
-              byte ! $ff
-              Select byte
-                Case $aa,$bb,$cc  ;< good
-                  chksum + byte
-                  *pkt\Push( byte )
-                Default           ;< oops
-                  *self\counts\rx\escape + 1
-              EndSelect
-            Else ;< nothing special
+        If esc
+          byte ! $ff
+          If byte <> $aa And byte <> $bb And byte <> $cc
+            *self\counts\rx\escape + 1
+          EndIf
+          chksum + byte
+          *pkt\buf[*pkt\len] = byte
+          *pkt\len + 1
+          esc = 0
+        Else
+          Select byte
+            Case $bb
+              *self\counts\rx\overhead + 1
+              esc = ~0 ;< next byte is special
+            Case $cc
+              *self\counts\rx\overhead + 2      ;< chk is considered overhead
+              *pkt\len - 1 : chksum - *pkt\buf[*pkt\len]  ;< backup & backout
+              If (chksum & $ff) = *pkt\buf[*pkt\len]
+                *self\counts\rx\packets + 1
+                prvEvtHandler( *self, #CHANEVT_ORPHANPKT, *pkt )
+              Else
+                *self\counts\rx\chksum + 1
+              EndIf
+              *pkt = FreePkt( *pkt ) : assert( *pkt=0 )
+            Case $aa
+              *self\counts\rx\overhead + 1
+              *self\counts\rx\framing + 1
+              *pkt\len = 0 : chksum = 0
+            Default
               chksum + byte
-              *pkt\Push( byte )
-            EndIf
-          Case $aa ;< technically an error
-            *self\counts\rx\overhead + 1
-            *self\counts\rx\framing + 1
-            *pkt\Reset()
-            chksum = 0
-          Case $bb ;< skip
-            *self\counts\rx\overhead + 1
-          Case $cc
-            *self\counts\rx\overhead + 2  ;< chk is considered overhead
-            chksum - prevbyte             ;< back out the chksum itself
-            If (chksum & $ff) = *pkt\Pop()
-              *self\counts\rx\packets + 1
-              prvEvtHandler( *self, #CHANEVT_ORPHANPKT, *pkt )
-            Else
-              *self\counts\rx\chksum + 1
-            EndIf
-            *pkt = *pkt\Free() : assert( *pkt=0 )
-          Default
-            chksum + byte
-            *pkt\Push( byte )
-        EndSelect
+              *pkt\buf[*pkt\len] = byte
+              *pkt\len + 1
+          EndSelect
+        EndIf
       Else
         If byte = $aa
           chksum = 0
-          *pkt = NewPkt( 8*1024 ) : assert( *pkt )
+          *pkt = NewPkt() : assert( *pkt )
           *self\counts\rx\overhead + 1
         EndIf
       EndIf
-      prevbyte = byte : idx + 1
+      idx + 1
     Wend
   Wend
   prvEvtHandler( *self, #CHANEVT_STOP, ElapsedMilliseconds() )
 EndProcedure
 
-Procedure.i prvExchange( *self.tChannel, *pkt.iPkt, timeout.i=20 )
-  ; a little more sophisticated than simply passing
-  ; raw pkts ... in here we're aware of structure because we
-  ; use the tag field to 'pair' an exchange
-  ProcedureReturn 0
-EndProcedure
-
 Procedure.i prvChannelFree( *self.tChannel, *counts.tCounters=0 )
-  assert( *self\mutex )
-  UnlockMutex( *self\mutex )    ;< signal thread to die
+  *self\die = ~0
   assert( *self\thread )
-  If Not WaitThread( *self\thread, 1000 )
+  If Not WaitThread( *self\thread, 500 )
     KillThread( *self\thread )  ;< times up!
   EndIf
-  FreeMutex( *self\mutex )
-  assert( *self\tx\mutex )
-  If Not TryLockMutex( *self\tx\mutex )
-    Delay(40)                 ;< one more try
-    If Not TryLockMutex( *self\tx\mutex )
-      Debug "TX Buffer Locked!"
-    EndIf
-  EndIf
-  FreeMutex( *self\tx\mutex ) ;< sorry, gotta go
+  assert( *self\pkt=0 )
+  FreeMutex( *self\txmutex ) : *self\txmutex=0
   *self\dev = *self\dev\Free() : assert( *self\dev=0 )
   prvCounters( *self, *counts ) ;< grab final stats on way out if desired
-  ClearStructure( *self, tChannel )
+  
+CompilerIf #PB_Compiler_Debugger
+  Protected counts.tCounters
+  prvCounters( *self, @counts )
+  Debug "Counts:"
+  Debug "RX Framing Errors: "+Str(counts\rx\framing)
+  Debug "RX Escaping Errors: "+Str(counts\rx\escape)
+  Debug "RX Checksum Errors: "+Str(counts\rx\chksum)
+  Debug "RX Packets: "+Str(counts\rx\packets)
+  Debug "RX Bytes: "+Str(counts\rx\bytes)
+  Debug "RX Overhead: "+Str(counts\rx\overhead)
+  Debug "TX Packets: "+Str(counts\tx\packets)
+  Debug "TX Bytes: "+Str(counts\tx\bytes)
+  Debug "TX Overhead: "+Str(counts\tx\overhead)
+  Debug "Orphans: "+Str(counts\orphans)
+  Debug "Good Exchanges: "+Str(counts\good_exchanges)
+  Debug "Failed Exchanges: "+Str(counts\failed_exchanges)
+CompilerEndIf
+
+  FillMemory( *self, SizeOf(tChannel) )
   FreeMemory( *self ) : *self=0
   ProcedureReturn *self
 EndProcedure
 
-Procedure.i NewChannel( *device.Device::iDevice, evtHandler.tChannelEvent )
+Procedure.i NewChannel( *d.iDevice, *evtHandler.tChannelEvent )
   Protected *self.tChannel=0
-  If *device And evtHandler
+  If *d And *evtHandler
     *self = AllocateMemory( SizeOf(tChannel) )
     *self\vtbl = ?iChannelClass
-    *self\evtHandler = evtHandler
-    *self\dev = *device
-    *self\mutex = CreateMutex() : assert( *self\mutex )
-    LockMutex( *self\mutex )
-    *self\tx\mutex = CreateMutex()
+    *self\evtHandler = *evtHandler
+    *self\dev = *d
+    *self\txmutex = CreateMutex() : assert( *self\txmutex )
+    *self\die = 0
+    *self\pkt = 0
     *self\thread = CreateThread( @prvThread(), *self )
     assert( *self\thread )
   EndIf
