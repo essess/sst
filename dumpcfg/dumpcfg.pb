@@ -10,27 +10,22 @@ IncludePath "..\inc"
 XIncludeFile "assert.pbi"
 XIncludeFile "device.pbi"
 XIncludeFile "channel.pbi"
+XIncludeFile "packet.pbi"
 
 UseModule Device
 UseModule Channel
+UseModule Packet
 
-Procedure.i First( *node.Device::tNode )
+Procedure.i First( *node.tNode )
   Debug "SerialNumber: "+*node\SerialNumber
   Debug "Description: "+*node\Description
   ProcedureReturn ~0 ;< first
 EndProcedure
 
 Procedure ChannelEvent( *c.iChannel, evt.i, *arg )
-  
   Select evt
     Case #CHANEVT_ORPHANPKT
-      ;      Debug "#CHANEVT_ORPHANPKT"
-      assert( *arg )
-      Protected.iPkt *pkt = *arg
-      If *pkt\Length() <> 103
-        Debug "ORPHAN (Exchange() missed one)"
-        ShowMemoryViewer( *pkt\Buffer(), *pkt\Length() )
-      EndIf
+;     Debug "#CHANEVT_ORPHANPKT"
     Case #CHANEVT_START
       Debug "#CHANEVT_START: "+Str(*arg)+"ms"
     Case #CHANEVT_STOP
@@ -38,65 +33,73 @@ Procedure ChannelEvent( *c.iChannel, evt.i, *arg )
   EndSelect
   
 EndProcedure
-
-
-Structure tHdr
+  
+Structure tMinHdr
   flags.a
   cmd.w
 EndStructure
-
-Structure tTagHdr Extends tHdr
-  tag.a
-EndStructure
-
-Structure tLenHdr Extends tHdr
+  
+Structure tLenHdr Extends tMinHdr
   len.w
 EndStructure
-
-Structure tTagLenHdr Extends tHdr
+  
+Structure tTagHdr Extends tMinHdr
   tag.a
+EndStructure
+  
+Structure tTagLenHdr Extends tTagHdr
   len.w
 EndStructure
-
+  
 Structure tSTFU Extends tTagHdr
   logtype.a
 EndStructure
 
+OpenConsole("Test")
 Device::Init()
 Define.iChannel *c = NewChannel( NewDevice(@First()), @ChannelEvent() )
 If *c
-  Define.iPkt *p = NewPkt( SizeOf(tSTFU) ) : assert( *p )
-  Define.tSTFU *ovr = *p\Buffer() : assert( *ovr )
-  *ovr\flags = $04
-  *ovr\cmd = $9401  ;< big endian
-  *ovr\logtype = $00
-  *p\SetLength( SizeOf(tSTFU) )
-  ;ShowMemoryViewer( *p\Buffer(), *p\Length() )
-  
+  Define.tPkt *p = NewPkt( #TAG ) : assert( *p )
+  Debug "Start Test"
   Define.i i
-  For i=1 To 300
-    Debug "Send Start ["+Str(i)+"]"
-    *ovr\tag = i & $ff
-    ' start here : flesh out exchange() and test
+  For i=1 To 1000
+    ; 0 - flags
+    *p\buf[1] = $01
+    *p\buf[2] = $94
+    ; 3 - tag
+    *p\buf[4] = $00
+    *p\len = 5
+
+    *c\Exchange( *p )
+    PrintN("tag[$"+RSet(Hex(PktTag(*p)),2,"0")+"]")
   Next
-  *p = *p\Free() : assert( *p=0 )
+  Debug "Test Done"
+  
   Define counts.tCounters
+  *p = FreePkt( *p ) : assert( *p=0 )
   *c = *c\Free( @counts ) : assert( *c=0 ) ;< device automatically free'd too
-  Debug "Counts:"
-  Debug "RX Framing Errors: "+Str(counts\rx\framing)
-  Debug "RX Escaping Errors: "+Str(counts\rx\escape)
-  Debug "RX Checksum Errors: "+Str(counts\rx\chksum)
-  Debug "RX Packets: "+Str(counts\rx\packets)
-  Debug "RX Bytes: "+Str(counts\rx\bytes)
-  Debug "RX Overhead: "+Str(counts\rx\overhead)
-  Debug "TX Packets: "+Str(counts\tx\packets)
-  Debug "TX Bytes: "+Str(counts\tx\bytes)
-  Debug "TX Overhead: "+Str(counts\tx\overhead)
-  Debug "Orphans: "+Str(counts\orphans)
-  Debug "Exchanges: "+Str(counts\exchanges)
+  
+  PrintN("Counts:")
+  PrintN("RX Framing Errors: "+Str(counts\rx\framing))
+  PrintN("RX Escaping Errors: "+Str(counts\rx\escape))
+  PrintN("RX Checksum Errors: "+Str(counts\rx\chksum))
+  PrintN("RX Packets: "+Str(counts\rx\packets))
+  PrintN("RX Bytes: "+Str(counts\rx\bytes))
+  PrintN("RX Overhead: "+Str(counts\rx\overhead))
+  PrintN("TX Packets: "+Str(counts\tx\packets))
+  PrintN("TX Bytes: "+Str(counts\tx\bytes))
+  PrintN("TX Overhead: "+Str(counts\tx\overhead))
+  PrintN("Orphans: "+Str(counts\orphans))
+  PrintN("Good Exchanges: "+Str(counts\good_exchanges))
+  PrintN("Failed Exchanges: "+Str(counts\failed_exchanges))
+  PrintN("Test Done")
+
 Else
   Debug "No devices found."
+  PrintN("No devices found.")
 EndIf
-
+PrintN("Press Return")
+Input()
+CloseConsole()
 
 
