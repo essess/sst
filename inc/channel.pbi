@@ -5,6 +5,7 @@
 ; contact me at the above email address and I can provide you with one.
 ; -----------------------------------------------------------------------------
 
+EnableExplicit
 XIncludeFile "device.pbi"
 XIncludeFile "packet.pbi"
 
@@ -41,7 +42,7 @@ DeclareModule Channel
   
   Interface iChannel
     Send.i( *pkt.tPkt )
-    Exchange.i( *pkt.tPkt, timeout.i=30 )
+    Exchange.i( *pkt.tPkt, timeout.i=50 )
     Counters.i( *counts.tCounters )
     Free.i( *counts.tCounters=0 )
   EndInterface

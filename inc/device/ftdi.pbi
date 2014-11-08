@@ -153,6 +153,7 @@ Declare.i FT_StopInTask( hnd.i )
 Declare.i FT_RestartInTask( hnd.i )
 Declare.i FT_SetTimeouts( hnd.i, rto.l, wto.l )
 Declare.i FT_GetQueueStatus( hnd.i, *rxcnt )
+Declare.i FT_SetDeadmanTimeout( hnd.i, timeout.w )
 
 ;{
 Prototype.i _FT_GetLibraryVersion(*lpdwDLLVersion)
@@ -175,6 +176,7 @@ Prototype.i _FT_StopInTask(ftHandle.i)
 Prototype.i _FT_RestartInTask(ftHandle.i)
 Prototype.i _FT_SetTimeouts(ftHandle.i,dwReadTimeout.l,dwWriteTimeout.l)
 Prototype.i _FT_GetQueueStatus(ftHandle.i,*lpdwAmountInRxQueue)
+Prototype.i _FT_SetDeadmanTimeout(ftHandle.i,dwDeadmanTimeout.w)
 ;}
 
 Structure DLL
@@ -198,6 +200,7 @@ Structure DLL
   *FT_RestartInTask._FT_RestartInTask
   *FT_SetTimeouts._FT_SetTimeouts
   *FT_GetQueueStatus._FT_GetQueueStatus
+  *FT_SetDeadmanTimeout._FT_SetDeadmanTimeout
 EndStructure
 
 Global *me.DLL = 0
@@ -229,6 +232,7 @@ Procedure.i FT_Load()
           \FT_RestartInTask = GetFunction( lib, "FT_RestartInTask" )
           \FT_SetTimeouts = GetFunction( lib, "FT_SetTimeouts" )
           \FT_GetQueueStatus = GetFunction( lib, "FT_GetQueueStatus" )
+          \FT_SetDeadmanTimeout = GetFunction( lib, "FT_SetDeadmanTimeout" )
         EndWith
       Else
         FreeStructure( *me )
@@ -337,4 +341,9 @@ EndProcedure
 Procedure.i FT_GetQueueStatus( hnd.i, *rxcnt )
   assert( *me )
   ProcedureReturn *me\FT_GetQueueStatus( hnd.i, *rxcnt )
+EndProcedure
+
+Procedure.i FT_SetDeadmanTimeout( hnd.i, timeout.w )
+  assert( *me )
+  ProcedureReturn *me\FT_SetDeadmanTimeout( hnd.i, timeout )
 EndProcedure

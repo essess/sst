@@ -5,6 +5,8 @@
 ; contact me at the above email address and I can provide you with one.
 ; -----------------------------------------------------------------------------
 
+EnableExplicit
+
 DeclareModule Packet
   
   #BUFSIZE = (2*1024)
@@ -39,7 +41,7 @@ DeclareModule Packet
     p\buf[3]
   EndMacro
   
-  ;TODO ENDIAN HELPERS
+  ;TODO ENDIAN HELPERS(?)
   
  EndDeclareModule
 

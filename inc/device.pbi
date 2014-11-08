@@ -5,6 +5,8 @@
 ; contact me at the above email address and I can provide you with one.
 ; -----------------------------------------------------------------------------
 
+EnableExplicit
+
 DeclareModule Device
     
   Structure tNode
@@ -26,11 +28,9 @@ DeclareModule Device
 EndDeclareModule
 
 Module Device
-  
   IncludeFile "assert.pbi"
   IncludeFile "device\ftdi.pbi"
   IncludeFile "device\types.pbi"
   IncludeFile "device\procs.pbi"
   IncludeFile "device\classes.pbi"
-  
 EndModule

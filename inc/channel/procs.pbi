@@ -74,9 +74,9 @@ Procedure.i prvGuardedSend( *self.tChannel, *pkt.tPkt )
   ProcedureReturn retval
 EndProcedure
 
-Procedure.i prvExchange( *self.tChannel, *pkt.tPkt, timeout.i=20 )
+Procedure.i prvExchange( *self.tChannel, *pkt.tPkt, timeout.i=50 )
   assert( *pkt )
-  assert( *pkt\len <= #BUFSIZE )
+  assert( *pkt\len <= #BUFSIZE ) : assert( *pkt\len >= 4 )
   assert( PktHasTag(*pkt) )
   assert( timeout>0 And timeout<3000 )
   assert( *self\pkt=0 )
@@ -89,8 +89,8 @@ Procedure.i prvExchange( *self.tChannel, *pkt.tPkt, timeout.i=20 )
     While time>0 And *self\pkt
       Delay(1) : time-1
     Wend
-    If Not *self\pkt
-      retval=~0 ;< this is the ultimate indicator of matched reply
+    If Not *self\pkt ;< this is the ultimate indicator of matched reply
+      retval=~0
       Debug "Exchange[$"+RSet(Hex(PktTag(*pkt)),2,"0")+"] Time: "+Str(timeout-time)+"ms"
       *self\counts\good_exchanges+1
     EndIf
