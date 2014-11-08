@@ -7,16 +7,17 @@
 
 Procedure.i prvSetup( *self.tDevice )
   If FT_SUCCESS(FT_StopInTask( *self\hnd )) And
+     FT_SUCCESS(FT_SetDeadmanTimeout( *self\hnd, 100 )) And
      FT_SUCCESS(FT_SetBaudRate( *self\hnd, 115200 )) And
      FT_SUCCESS(FT_SetDataCharacteristics( *self\hnd, #FT_BITS_8, #FT_STOP_BITS_1, #FT_PARITY_ODD )) And
      FT_SUCCESS(FT_Purge( *self\hnd, #FT_PURGE_RX|#FT_PURGE_TX )) And
-     FT_SUCCESS(FT_SetTimeouts( *self\hnd, 10, 10 )) And
-     FT_SUCCESS(FT_SetLatencyTimer( *self\hnd, 5 )) And
+     FT_SUCCESS(FT_SetTimeouts( *self\hnd, 5, 5 )) And
      FT_SUCCESS(FT_RestartInTask( *self\hnd ))
-    Delay(100) ;< or risk having the driver crash your process
+    FT_SetLatencyTimer( *self\hnd, 2 )    ;< older devices choke on this, so don't check retval
+    ;Delay(100)                           ;< or risk having the driver crash your process
     ProcedureReturn ~0
   EndIf
-  Debug "prvSetup(): FAIL" ;< FT_SetLatencyTimer() on older devices!
+  Debug "prvSetup(): FAIL"
   ProcedureReturn 0
 EndProcedure
 

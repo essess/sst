@@ -3,6 +3,13 @@
  The following are my wishes about how I'd like to see the firmware change AND the reasons why
 @section undeprecate SET_ASYNC_DATALOG_TYPE
  I want to immediately silence the line if I need to. Right now, this is the only option to do that with.
+@section add GET_ASYNC_DATALOG_TYPE
+ I want to be able to restore state correctly, which means I need to know the initial state before I
+ start mucking around with datalog types. I want to do this without crawling location id's.
+@section dump sorting options on RETRIEVE_LIST_OF_LOCATION_IDS
+ Just send them all, I'll do the heavy lifting of sorting/slicing/dicing on the PC-side. You can probably
+ dump that nasty 65535 loop as a result. Recently, I just found out that it takes ~200ms of cpu time on
+ the ecu firmware! That's too long for single threaded REALTIME code.
 @section how do I know what is in the 'chunks' of RESPONSE_BASIC_DATALOG ?
  I see that I could track back to a CORE_VARS_LOCATION_ID from the address that the chunk points to, but that
  doesn't tell me anything about what is contained in the chunk. Maybe this is by design and you have to
