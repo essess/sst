@@ -58,7 +58,7 @@ DeclareModule Cmd
     #BLOCK_SPARE_FLAG_7       = (1<<7)
     #BLOCK_SPARE_FLAG_8       = (1<<8)
     #BLOCK_SPARE_FLAG_9       = (1<<9)
-    #BLOCK_SPARE_FLAG_10      = (1<<10)
+    #BLOCK_IS_2DUL_TABLE      = (1<<10)
     #BLOCK_SPARE_FLAG_11      = (1<<11)
     #BLOCK_IS_2DUS_TABLE      = (1<<12)
     #BLOCK_IS_MAIN_TABLE      = (1<<13)
@@ -101,6 +101,9 @@ DeclareModule Cmd
     #BLEND_VERSUS_RPM_TABLE_LOCATION_ID                   = $010E
     #BLEND_VERSUS_RPM_TABLE2_LOCATION_ID                  = $010F
     #MAF_VERSUS_VOLTAGE_TABLE_LOCATION_ID                 = $011F
+    #IGN_VS_IAT_TABLE_LOCATION_ID                         = $0121
+    #IGN_VS_CLT_TABLE_LOCATION_ID                         = $0122
+    #IGN_VS_ETH_TABLE_LOCATION_ID                         = $0123
     #SMALL_TABLES_A_LOCATION_ID                           = $3000
     #SMALL_TABLES_A2_LOCATION_ID                          = $3001
     #SMALL_TABLES_B_LOCATION_ID                           = $3002
@@ -158,6 +161,34 @@ DeclareModule Cmd
     #CMDERR_UNKNOWN = ~#CMDERR_OK
   EndEnumeration
   
+  Macro CMD_SUCCESS( e )
+    (e = Cmd::#CMDERR_OK)
+  EndMacro
+      
+  Macro CMD_FAILURE( e )
+    (Not CMD_SUCCESS(e))
+  EndMacro
+  
+  Macro HasParent( f )
+    (f & Cmd::#BLOCK_HAS_PARENT)
+  EndMacro
+  
+  Macro InRAM( f )
+    (f & Cmd::#BLOCK_IS_IN_RAM)
+  EndMacro
+  
+  Macro InFlash( f )
+    (f & Cmd::#BLOCK_IS_IN_FLASH)
+  EndMacro
+  
+  Macro IsConfiguration( f )
+    (f & Cmd::#BLOCK_IS_CONFIGURATION)
+  EndMacro
+  
+  Macro IsReadOnly( f )
+    (f & Cmd::#BLOCK_IS_READ_ONLY)
+  EndMacro
+  
   Declare.i GetInterfaceString( *c.iChannel, *p.tPkt, *s.String )
   Declare.i GetFirmwareString( *c.iChannel, *p.tPkt, *s.String )
   Declare.i GetDecoderString( *c.iChannel, *p.tPkt, *s.String )
@@ -172,39 +203,12 @@ DeclareModule Cmd
   Declare.i DoClearCountersAndFlags( *c.iChannel, *p.tPkt )
   Declare.i SetDatalogType( *c.iChannel, *p.tPkt, type.a )
   Declare.i CreateLocationsList( *c.iChannel, *p.tPkt, List Locations.tLocation() )
-  Declare.i GetLocationDetails( *c.iChannel, *p.tPkt, *l.tLocation )
+  Declare.i GetLocationDetails( *chan.iChannel, *pkt.tPkt, *loc.tLocation )
+  Declare.i GetLocationList( *c.iChannel, *p.tPkt, List Locations.tLocation() )
   
   Declare.s LocationIDToString( id.u )
   
 EndDeclareModule
-
-Macro CMD_SUCCESS( e )
-  (e = Cmd::#CMDERR_OK)
-EndMacro
-    
-Macro CMD_FAILURE( e )
-  (Not CMD_SUCCESS(e))
-EndMacro
-
-Macro HasParent( f )
-  (f & Cmd::#BLOCK_HAS_PARENT)
-EndMacro
-
-Macro InRAM( f )
-  (f & Cmd::#BLOCK_IS_IN_RAM)
-EndMacro
-
-Macro InFlash( f )
-  (f & Cmd::#BLOCK_IS_IN_FLASH)
-EndMacro
-
-Macro IsConfiguration( f )
-  (f & Cmd::#BLOCK_IS_CONFIGURATION)
-EndMacro
-
-Macro IsReadOnly( f )
-  (f & Cmd::#BLOCK_IS_READ_ONLY)
-EndMacro
 
 Module Cmd
   UseModule Channel

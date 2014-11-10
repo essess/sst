@@ -5,6 +5,82 @@
 ; contact me at the above email address and I can provide you with one.
 ; -----------------------------------------------------------------------------
 
+CompilerIf #PB_Compiler_Debugger ;{
+  Procedure.s prvLocationToStr( *l.tLocation )
+    Protected s.s = "  ID:     $"+RSet(Hex(*l\id),4,"0")+" "+LocationIDToString(*l\id) + #CRLF$ +
+                     "  Flags:  $"+RSet(Hex(*l\flags),4,"0")+" (%"+RSet(Bin(*l\flags),16,"0")+")" + #CRLF$
+    If *l\flags & #BLOCK_IS_INDEXABLE
+      s + "                #BLOCK_IS_INDEXABLE" + #CRLF$
+    EndIf
+    If IsReadOnly(*l\flags)
+      s + "                #BLOCK_IS_READ_ONLY" + #CRLF$
+    EndIf
+    If *l\flags & #BLOCK_GETS_VERIFIED
+      s + "                #BLOCK_GETS_VERIFIED" + #CRLF$
+    EndIf
+    If *l\flags & #BLOCK_FOR_BACKUP_RESTORE
+      s + "                #BLOCK_FOR_BACKUP_RESTORE" + #CRLF$
+    EndIf
+    If *l\flags & #BLOCK_SPARE_FLAG_7
+      s + "                #BLOCK_SPARE_FLAG_7" + #CRLF$
+    EndIf
+    If *l\flags & #BLOCK_SPARE_FLAG_8
+      s + "                #BLOCK_SPARE_FLAG_8" + #CRLF$
+    EndIf
+    If *l\flags & #BLOCK_SPARE_FLAG_9
+      s + "                #BLOCK_SPARE_FLAG_9" + #CRLF$
+    EndIf
+    If *l\flags & #BLOCK_IS_2DUL_TABLE
+      s + "                #BLOCK_IS_2DUL_TABLE" + #CRLF$
+    EndIf
+    If *l\flags & #BLOCK_SPARE_FLAG_11
+      s + "                #BLOCK_SPARE_FLAG_11" + #CRLF$
+    EndIf
+    If *l\flags & #BLOCK_IS_2DUS_TABLE
+      s + "                #BLOCK_IS_2DUS_TABLE" + #CRLF$
+    EndIf
+    If *l\flags & #BLOCK_IS_MAIN_TABLE
+      s + "                #BLOCK_IS_MAIN_TABLE" + #CRLF$
+    EndIf
+    If *l\flags & #BLOCK_IS_LOOKUP_DATA
+      s + "                #BLOCK_IS_LOOKUP_DATA" + #CRLF$
+    EndIf
+    If IsConfiguration(*l\flags)
+      s + "                #BLOCK_IS_CONFIGURATION" + #CRLF$
+    EndIf
+    If HasParent(*l\flags) 
+      s + "  Parent: $"+RSet(Hex(*l\parent),4,"0") + #CRLF$
+    EndIf
+    If InRAM(*l\flags)
+      s + "  RAM:    $"+RSet(Hex(*l\page\ram),2,"0")+"."+RSet(Hex(*l\address\ram),4,"0") + #CRLF$
+    EndIf
+    If InFlash(*l\flags) 
+      s + "  Flash:  $"+RSet(Hex(*l\page\flash),2,"0")+"."+RSet(Hex(*l\address\flash),4,"0") + #CRLF$
+    EndIf
+    s + "  Size:   $"+RSet(Hex(*l\size),4,"0")+" ("+Str(*l\size)+")" + #CRLF$
+    ProcedureReturn s
+  EndProcedure
+CompilerEndIf ;}
+
+Procedure.i prvGetString( *chan.iChannel, *pkt.tPkt, *s.String )
+  Protected retval.i = #CMDERR_EXCFAIL
+  If *chan\Exchange(*pkt) And Not PktIsNack(*pkt)
+    assert( PktHasTag(*pkt) )
+    Protected strlen.i=-1, *strbuf=@*pkt\buf[4]
+    If PktHasLength(*pkt)
+      Swap *pkt\buf[4], *pkt\buf[5]
+      Protected len.i = PeekU(@*pkt\buf[4])
+      If len <= #BUFSIZE And len > 0
+        strlen = len-1 ;< not including terminator
+      EndIf
+      *strbuf = @*pkt\buf[6]
+    EndIf
+    *s\s = PeekS(*strbuf, strlen, #PB_Ascii)
+    retval = #CMDERR_OK
+  EndIf
+  ProcedureReturn retval
+EndProcedure
+
 Procedure.s LocationIDToString( id.u )
   Select id
     Case #VE_TABLE_MAIN_LOCATION_ID
@@ -73,6 +149,12 @@ Procedure.s LocationIDToString( id.u )
       ProcedureReturn "#BLEND_VERSUS_RPM_TABLE2_LOCATION_ID"
     Case #MAF_VERSUS_VOLTAGE_TABLE_LOCATION_ID
       ProcedureReturn "#MAF_VERSUS_VOLTAGE_TABLE_LOCATION_ID"
+    Case #IGN_VS_IAT_TABLE_LOCATION_ID
+      ProcedureReturn "#IGN_VS_IAT_TABLE_LOCATION_ID"
+    Case #IGN_VS_CLT_TABLE_LOCATION_ID
+      ProcedureReturn "#IGN_VS_CLT_TABLE_LOCATION_ID"
+    Case #IGN_VS_ETH_TABLE_LOCATION_ID
+      ProcedureReturn "#IGN_VS_ETH_TABLE_LOCATION_ID"
     Case #SMALL_TABLES_A_LOCATION_ID
       ProcedureReturn "#SMALL_TABLES_A_LOCATION_ID"
     Case #SMALL_TABLES_A2_LOCATION_ID
@@ -168,26 +250,7 @@ Procedure.s LocationIDToString( id.u )
     Case #FLAGGABLES2_LOCATION_ID
       ProcedureReturn "#FLAGGABLES2_LOCATION_ID"
   EndSelect
-  ProcedureReturn "Unknown"
-EndProcedure
-
-Procedure.i prvGetString( *chan.iChannel, *pkt.tPkt, *s.String )
-  Protected retval.i = #CMDERR_EXCFAIL
-  If *chan\Exchange(*pkt) And Not PktIsNack(*pkt)
-    assert( PktHasTag(*pkt) )
-    Protected strlen.i=-1, *strbuf=@*pkt\buf[4]
-    If PktHasLength(*pkt)
-      Swap *pkt\buf[4], *pkt\buf[5]
-      Protected len.i = PeekU(@*pkt\buf[4])
-      If len <= #BUFSIZE And len > 0
-        strlen = len-1 ;< not including terminator
-      EndIf
-      *strbuf = @*pkt\buf[6]
-    EndIf
-    *s\s = PeekS(*strbuf, strlen, #PB_Ascii)
-    retval = #CMDERR_OK
-  EndIf
-  ProcedureReturn retval
+  ProcedureReturn "Unknown [$"+RSet(Hex(id),4,"0")+"]"
 EndProcedure
 
 Procedure.i GetInterfaceString( *chan.iChannel, *pkt.tPkt, *s.String )
@@ -478,4 +541,23 @@ Procedure.i GetLocationDetails( *chan.iChannel, *pkt.tPkt, *loc.tLocation )
   EndIf
   ProcedureReturn retval
   
+EndProcedure
+
+Procedure.i GetLocationList( *chan.iChannel, *pkt.tPkt, List Locations.tLocation() )
+  
+  assert( *chan )
+  assert( *pkt )
+  
+  Protected.i retval = CreateLocationsList( *chan, *pkt, Locations() )
+  If CMD_SUCCESS(retval)   
+    ForEach Locations()
+      retval = GetLocationDetails(*chan, *pkt, @Locations())
+      If CMD_FAILURE(retval)
+        ClearList( Locations() )
+        Break
+      EndIf
+      ;Debug prvLocationToStr( @Locations() )
+    Next
+  EndIf
+  ProcedureReturn retval
 EndProcedure

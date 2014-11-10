@@ -47,7 +47,7 @@ DeclareModule Channel
     Free.i( *counts.tCounters=0 )
   EndInterface
   Prototype tChannelEvent( *c.iChannel, evt.i, *arg )
-  Declare.i NewChannel( *d.iDevice, *evtHandler.tChannelEvent )
+  Declare.i NewChannel( *d.iDevice, *evtHandler.tChannelEvent=0 )
   
 EndDeclareModule
 

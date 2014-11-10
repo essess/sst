@@ -91,7 +91,7 @@ Procedure.i prvExchange( *self.tChannel, *pkt.tPkt, timeout.i=50 )
     Wend
     If Not *self\pkt ;< this is the ultimate indicator of matched reply
       retval=~0
-      Debug "Exchange[$"+RSet(Hex(PktTag(*pkt)),2,"0")+"] Time: "+Str(timeout-time)+"ms"
+      ;Debug "Exchange[$"+RSet(Hex(PktTag(*pkt)),2,"0")+"] Time: "+Str(timeout-time)+"ms"
       *self\counts\good_exchanges+1
     EndIf
   EndIf
@@ -99,6 +99,7 @@ Procedure.i prvExchange( *self.tChannel, *pkt.tPkt, timeout.i=50 )
   UnlockMutex( *self\txmutex )
   If Not retval
     *self\counts\failed_exchanges+1
+    Debug "TIMEOUT: Exchange[$"+RSet(Hex(PktTag(*pkt)),2,"0")+"]"
   EndIf
   ProcedureReturn retval
 EndProcedure
@@ -124,7 +125,7 @@ Procedure prvEvtHandler( *self.tChannel, evt.i, *arg )
       *self\counts\orphans + 1 ;< spurious/async, aka an orphan
     EndIf
   EndIf
-  *self\evtHandler( *self, evt, *arg )
+  If *self\evtHandler : *self\evtHandler( *self, evt, *arg ) : EndIf
 EndProcedure
 
 Procedure prvThread( *self.tChannel )
@@ -219,9 +220,9 @@ CompilerEndIf
   ProcedureReturn *self
 EndProcedure
 
-Procedure.i NewChannel( *d.iDevice, *evtHandler.tChannelEvent )
+Procedure.i NewChannel( *d.iDevice, *evtHandler.tChannelEvent=0 )
   Protected *self.tChannel=0
-  If *d And *evtHandler
+  If *d
     *self = AllocateMemory( SizeOf(tChannel) )
     *self\vtbl = ?iChannelClass
     *self\evtHandler = *evtHandler
