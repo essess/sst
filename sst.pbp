@@ -13,7 +13,7 @@
   <section name="data">
     <explorer view="inc\" pattern="0"/>
     <log show="1"/>
-    <lastopen date="2014-11-08 10:18" user="Sean" host="CHERNOBYL"/>
+    <lastopen date="2014-11-08 10:33" user="Sean" host="CHERNOBYL"/>
   </section>
   <section name="files">
     <file name="detect\detect.pb">
